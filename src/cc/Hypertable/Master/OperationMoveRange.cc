@@ -109,7 +109,7 @@ void OperationMoveRange::execute() {
 
     if (!bpa->get_balance_destination(m_table, m_range, m_destination)) {
       m_context->op->unblock(Dependency::SERVERS);
-      return;
+      break;
     }
 
     // if the destination changed (i.e. because the old destination is
@@ -121,7 +121,7 @@ void OperationMoveRange::execute() {
     HT_MAYBE_FAIL("move-range-INITIAL-a");
     m_context->mml_writer->record_state(this);
     HT_MAYBE_FAIL("move-range-INITIAL-b");
-    return;
+    break;
 
   case OperationState::STARTED:
     if (m_event) {
@@ -161,7 +161,7 @@ void OperationMoveRange::execute() {
         if (e.code() == Error::RANGESERVER_RANGE_NOT_YET_RELINQUISHED) {
           HT_INFOF("%s - %s", Error::get_text(e.code()), e.what());
           poll(0, 0, 2000);
-          return;
+          break;
         }
 
         if (!Utility::table_exists(m_context, m_table.id)) {
@@ -170,7 +170,7 @@ void OperationMoveRange::execute() {
           bpa->balance_move_complete(m_table, m_range);
           remove_approval_add(0x03);
           complete_ok(bpa);
-          return;
+          break;
         }
 
         // server might be down - go back to the initial state and pick a
@@ -180,7 +180,7 @@ void OperationMoveRange::execute() {
                  Error::get_text(e.code()), e.what());
         poll(0, 0, 5000);
         set_state(OperationState::INITIAL);
-        return;
+        break;
       }
     }
     HT_MAYBE_FAIL("move-range-LOAD_RANGE");
@@ -222,7 +222,7 @@ void OperationMoveRange::execute() {
           // Fetch new destination, if it changed, and then try again
           if (!bpa->get_balance_destination(m_table, m_range, m_destination))
             m_context->op->unblock(Dependency::SERVERS);
-          return;
+          break;
         }
       }
     }

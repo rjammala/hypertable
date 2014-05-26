@@ -50,6 +50,7 @@ OperationRecoverRanges.cc
 OperationRecreateIndexTables.cc
 OperationRegisterServer.cc
 OperationRegisterServerBlocker.cc
+OperationRelinquish.cc
 OperationRelinquishAcknowledge.cc
 OperationRenameTable.cc
 OperationSetState.cc
