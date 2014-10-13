@@ -77,7 +77,7 @@ namespace Hypertable {
     void initialize();
 
     struct ScannerState {
-      CellListScanner *scanner;
+      MergeScannerAccessGroup *scanner;
       Key key;
       ByteString value;
     };

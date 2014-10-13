@@ -38,7 +38,6 @@
 #include <Hypertable/RangeServer/MaintenanceTaskCompaction.h>
 #include <Hypertable/RangeServer/MaintenanceTaskRelinquish.h>
 #include <Hypertable/RangeServer/MaintenanceTaskSplit.h>
-#include <Hypertable/RangeServer/MergeScanner.h>
 #include <Hypertable/RangeServer/MergeScannerRange.h>
 #include <Hypertable/RangeServer/MetaLogDefinitionRangeServer.h>
 #include <Hypertable/RangeServer/MetaLogEntityRange.h>

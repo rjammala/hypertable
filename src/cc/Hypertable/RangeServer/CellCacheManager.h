@@ -30,7 +30,7 @@
 #include <Hypertable/RangeServer/CellCache.h>
 #include <Hypertable/RangeServer/CellList.h>
 #include <Hypertable/RangeServer/CellListScanner.h>
-#include <Hypertable/RangeServer/MergeScanner.h>
+#include <Hypertable/RangeServer/MergeScannerAccessGroup.h>
 #include <Hypertable/RangeServer/ScanContext.h>
 
 #include <Hypertable/Lib/Schema.h>
@@ -111,7 +111,7 @@ namespace Hypertable {
     /// @param mscanner Merge scanner to which immutable cache scanner should be
     /// added
     /// @param scan_ctx Scan context for initializing immutable cache scanner
-    void add_immutable_scanner(MergeScanner *mscanner, ScanContextPtr &scan_ctx);
+    void add_immutable_scanner(MergeScannerAccessGroup *mscanner, ScanContextPtr &scan_ctx);
 
     /// Creates scanners on the active and immutable caches and adds them to a
     /// merge scanner.  If the active cache is not empty, a scanner is
@@ -121,7 +121,7 @@ namespace Hypertable {
     /// @param mscanner Merge scanner to which immutable cache scanner should be
     /// added
     /// @param scan_ctx Scan context for initializing scanners
-    void add_scanners(MergeScanner *scanner, ScanContextPtr &scan_context);
+    void add_scanners(MergeScannerAccessGroup *scanner, ScanContextPtr &scan_context);
 
     /// Populates map of split row data.
     /// This method calls CellCache::split_row_estimate_data() on both the

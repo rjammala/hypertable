@@ -117,8 +117,8 @@ bool AccessGroupGarbageTracker::check_needed(time_t now) {
 
 
 void
-AccessGroupGarbageTracker::adjust_targets(time_t now, MergeScanner *mscanner) {
-  if (mscanner && (mscanner->get_flags() & MergeScanner::RETURN_DELETES) == 0) {
+AccessGroupGarbageTracker::adjust_targets(time_t now, MergeScannerAccessGroup *mscanner) {
+  if (mscanner && (mscanner->get_flags() & MergeScannerAccessGroup::RETURN_DELETES) == 0) {
     double input = (double)mscanner->get_input_bytes();
     double garbage = input - (double)mscanner->get_output_bytes();
     adjust_targets(now, input, garbage);

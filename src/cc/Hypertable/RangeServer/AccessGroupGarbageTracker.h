@@ -30,7 +30,7 @@
 
 #include <Hypertable/RangeServer/CellCacheManager.h>
 #include <Hypertable/RangeServer/CellStoreInfo.h>
-#include <Hypertable/RangeServer/MergeScanner.h>
+#include <Hypertable/RangeServer/MergeScannerAccessGroup.h>
 
 #include <Hypertable/Lib/Schema.h>
 
@@ -87,7 +87,7 @@ namespace Hypertable {
   /// </pre>
   /// The next step of the compaction routine is to perform the compaction:
   /// <pre>
-  /// %MergeScanner *mscanner = new %MergeScannerAccessGroup ...
+  /// %MergeScannerAccessGroup *mscanner = new %MergeScannerAccessGroup ...
   /// while (scanner->get(key, value)) {
   ///   ...
   ///   scanner->forward();
@@ -105,7 +105,7 @@ namespace Hypertable {
   /// update_cellstore_info() routine must be called to properly update the
   /// state of the garbage tracker.  For example:
   /// <pre>
-  /// bool gc_compaction = (mscanner->get_flags() & MergeScanner::RETURN_DELETES) == 0;
+  /// bool gc_compaction = (mscanner->get_flags() & MergeScannerAccessGroup::RETURN_DELETES) == 0;
   /// garbage_tracker.update_cellstore_info(stores, now, gc_compaction);
   /// </pre>
   class AccessGroupGarbageTracker {
@@ -208,13 +208,13 @@ namespace Hypertable {
     /// Adjusts targets using statistics from a merge scanner used in a GC
     /// compaction.  This member function first checks mscanner to see if it
     /// was a GC compaction by checking its flags for the absence of the
-    /// MergeScanner::RETURN_DELETES, flag and if so, it retrieves the i/o
+    /// MergeScannerAccessGroup::RETURN_DELETES, flag and if so, it retrieves the i/o
     /// statistics from <code>mscanner</code> to determine the overall size and
     /// amount of garbage removed during the merge scan and then calls
     /// @ref adjust_targets
     /// @param now Current time to be used in elapsed time calculation
     /// @param mscanner Merge scanner used in a GC compaction
-    void adjust_targets(time_t now, MergeScanner *mscanner);
+    void adjust_targets(time_t now, MergeScannerAccessGroup *mscanner);
 
     /// Updates stored data statistics from current set of %CellStores.
     /// This method updates the #m_stored_expirable, #m_stored_deletes,
