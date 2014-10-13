@@ -27,8 +27,7 @@
 #ifndef Hypertable_RangeServer_IndexUpdater_h
 #define Hypertable_RangeServer_IndexUpdater_h
 
-#include <Hypertable/RangeServer/Global.h>
-
+#include <Hypertable/Lib/ResultCallback.h>
 #include <Hypertable/Lib/Schema.h>
 #include <Hypertable/Lib/Table.h>
 #include <Hypertable/Lib/TableMutatorAsync.h>
@@ -40,8 +39,6 @@
 #include <memory>
 
 namespace Hypertable {
-
-  class ResultCallback;
 
   /// @addtogroup RangeServer
   /// @{

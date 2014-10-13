@@ -26,7 +26,10 @@
 
 
 #include <Common/Compat.h>
+
 #include "IndexUpdater.h"
+
+#include <Hypertable/RangeServer/Global.h>
 
 #include <Hypertable/Lib/IndexTables.h>
 #include <Hypertable/Lib/LoadDataEscape.h>

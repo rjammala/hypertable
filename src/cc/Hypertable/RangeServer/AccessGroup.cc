@@ -183,10 +183,10 @@ void AccessGroup::add(const Key &key, const ByteString value) {
 }
 
 
-CellListScanner *AccessGroup::create_scanner(ScanContextPtr &scan_context) {
+MergeScannerAccessGroup *AccessGroup::create_scanner(ScanContextPtr &scan_context) {
   uint32_t flags = (scan_context->spec && scan_context->spec->return_deletes) ?
     MergeScanner::RETURN_DELETES : 0;
-  MergeScanner *scanner = 
+  MergeScannerAccessGroup *scanner = 
     new MergeScannerAccessGroup(m_table_name, scan_context,
                                 flags | MergeScanner::ACCUMULATE_COUNTERS);
 
@@ -275,13 +275,13 @@ bool AccessGroup::include_in_scan(ScanContextPtr &scan_context) {
 }
 
 
-void AccessGroup::split_row_estimate_data_cached(SplitRowDataMapT &split_row_data) {
+void AccessGroup::split_row_estimate_data_cached(CellList::SplitRowDataMapT &split_row_data) {
   ScopedLock lock(m_mutex);
   m_cell_cache_manager->split_row_estimate_data(split_row_data);
 }
 
 
-void AccessGroup::split_row_estimate_data_stored(SplitRowDataMapT &split_row_data) {
+void AccessGroup::split_row_estimate_data_stored(CellList::SplitRowDataMapT &split_row_data) {
   ScopedLock lock(m_mutex);
   if (!m_in_memory) {
     foreach_ht (CellStoreInfo &csinfo, m_stores)

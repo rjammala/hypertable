@@ -22,7 +22,7 @@
 #ifndef Hypertable_RangeServer_ScannerMap_h
 #define Hypertable_RangeServer_ScannerMap_h
 
-#include <Hypertable/RangeServer/CellListScanner.h>
+#include <Hypertable/RangeServer/MergeScannerRange.h>
 #include <Hypertable/RangeServer/Range.h>
 
 #include <Hypertable/Lib/ProfileDataScanner.h>
@@ -56,7 +56,7 @@ namespace Hypertable {
      * @param profile_data Scanner profile data
      * @return unique scanner ID
      */
-    uint32_t put(CellListScannerPtr &scanner, RangePtr &range,
+    uint32_t put(MergeScannerRangePtr &scanner, RangePtr &range,
                  const TableIdentifier *table, ProfileDataScanner &profile_data);
 
     /**
@@ -72,7 +72,7 @@ namespace Hypertable {
      * function
      * @return true if found, false if not
      */
-    bool get(uint32_t id, CellListScannerPtr &scanner, RangePtr &range,
+    bool get(uint32_t id, MergeScannerRangePtr &scanner, RangePtr &range,
              TableIdentifierManaged &table, ProfileDataScanner *profile_data);
 
     /**
@@ -125,7 +125,7 @@ namespace Hypertable {
 
     /// Holds scanner information.
     struct ScanInfo {
-      CellListScannerPtr scanner;
+      MergeScannerRangePtr scanner;
       RangePtr range;
       int64_t last_access_millis;
       TableIdentifierManaged table;
