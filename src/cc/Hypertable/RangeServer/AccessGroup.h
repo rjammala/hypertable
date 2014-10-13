@@ -1,5 +1,5 @@
 /* -*- c++ -*-
- * Copyright (C) 2007-2013 Hypertable, Inc.
+ * Copyright (C) 2007-2014 Hypertable, Inc.
  *
  * This file is part of Hypertable.
  *
@@ -24,8 +24,8 @@
 /// This file contains declarations for AccessGroup, a class for providing data
 /// management and queries over an access group of a range.
 
-#ifndef HYPERTABLE_ACCESSGROUP_H
-#define HYPERTABLE_ACCESSGROUP_H
+#ifndef Hypertable_RangeServer_AccessGroup_h
+#define Hypertable_RangeServer_AccessGroup_h
 
 #include <Hypertable/RangeServer/AccessGroupGarbageTracker.h>
 #include <Hypertable/RangeServer/CellCacheManager.h>
@@ -58,6 +58,7 @@ namespace Hypertable {
   /// @addtogroup RangeServer
   /// @{
 
+  /// Access group
   class AccessGroup : public ReferenceCount {
 
   public:
@@ -132,6 +133,9 @@ namespace Hypertable {
                 AccessGroupSpec *ag_spec, const RangeSpec *range,
                 const Hints *hints=0);
 
+    /// Adds a key/value pair
+    /// @param key Key
+    /// @param value Value
     void add(const Key &key, const ByteString value);
 
     void split_row_estimate_data_cached(CellList::SplitRowDataMapT &split_row_data);
@@ -300,4 +304,4 @@ namespace Hypertable {
 
 } // namespace Hypertable
 
-#endif // HYPERTABLE_ACCESSGROUP_H
+#endif // Hypertable_RangeServer_AccessGroup_h

@@ -1488,9 +1488,8 @@ RangeServer::create_scanner(ResponseCallbackCreateScanner *cb,
                            profile_data.disk_read);
     }
 
-    MergeScannerRange *rscan=dynamic_cast<MergeScannerRange *>(scanner.get());
-    int skipped_rows = rscan ? rscan->get_skipped_rows() : 0;
-    int skipped_cells = rscan ? rscan->get_skipped_cells() : 0;
+    int skipped_rows = scanner->get_skipped_rows();
+    int skipped_cells = scanner->get_skipped_cells();
 
     if (more) {
       scan_ctx->deep_copy_specs();

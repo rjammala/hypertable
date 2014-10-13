@@ -19,6 +19,11 @@
  * 02110-1301, USA.
  */
 
+/// @file
+/// Declarations for ScannerMap.
+/// This file contains the type declarations for ScannerMap, a class for holding
+/// outstanding range scanners.
+
 #ifndef Hypertable_RangeServer_ScannerMap_h
 #define Hypertable_RangeServer_ScannerMap_h
 
@@ -41,10 +46,10 @@ namespace Hypertable {
   /// @addtogroup RangeServer
   /// @{
 
+  /// Map to hold outstanding scanners.
   class ScannerMap {
 
   public:
-    ScannerMap() : m_mutex() { return; }
 
     /**
      * This method computes a unique scanner ID and puts the given scanner
@@ -95,12 +100,12 @@ namespace Hypertable {
     /**
      * This method retrieves outstanding scanner counts.  It returns the
      * total number of outstanding scanners as well as the number of outstanding
-     * scanners per-table.  Only the tables that exist in the table_scanner_count_map
-     * that is passed into this method will be counted.
+     * scanners per-table.  Only the tables that exist in the
+     * table_scanner_count_map that is passed into this method will be counted.
      *
      * @param totalp address of variable to hold total outstanding counters
-     * @param table_scanner_count_map reference to table count map (NOTE: must be filled
-     * in by caller, no new entries will be added)
+     * @param table_scanner_count_map reference to table count map
+     *  (NOTE: must be filled in by caller, no new entries will be added)
      */
     void get_counts(int32_t *totalp, CstrToInt32Map &table_scanner_count_map);
 
@@ -125,9 +130,13 @@ namespace Hypertable {
 
     /// Holds scanner information.
     struct ScanInfo {
+      /// Scanner
       MergeScannerRangePtr scanner;
+      /// Range
       RangePtr range;
+      /// Last access time in milliseconds since epoch
       int64_t last_access_millis;
+      /// Table identifier
       TableIdentifierManaged table;
       /// Accumulated profile data
       ProfileDataScanner profile_data;

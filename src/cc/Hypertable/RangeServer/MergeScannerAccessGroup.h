@@ -1,5 +1,5 @@
 /* -*- c++ -*-
- * Copyright (C) 2007-2013 Hypertable, Inc.
+ * Copyright (C) 2007-2014 Hypertable, Inc.
  *
  * This file is part of Hypertable.
  *
@@ -19,16 +19,21 @@
  * 02110-1301, USA.
  */
 
+/// @file
+/// Declarations for MergeScannerAccessGroup.
+/// This file contains the type declarations for MergeScannerAccessGroup, a
+/// class used to perform a scan over an access group.
+
 #ifndef Hypertable_RangeServer_MergeScannerAccessGroup_h
 #define Hypertable_RangeServer_MergeScannerAccessGroup_h
-
-#include "Common/ByteString.h"
-#include "Common/DynamicBuffer.h"
 
 #include "CellListScanner.h"
 #include "CellStoreReleaseCallback.h"
 #include "IndexUpdater.h"
 #include "ScanContext.h"
+
+#include <Common/ByteString.h>
+#include <Common/DynamicBuffer.h>
 
 #include <memory>
 #include <queue>
@@ -38,6 +43,10 @@
 
 namespace Hypertable {
 
+  /// @addtogroup RangeServer
+  /// @{
+
+  /// Merge scanner for access groups.
   class MergeScannerAccessGroup {
 
     class RegexpInfo {
@@ -102,8 +111,15 @@ namespace Hypertable {
       ACCUMULATE_COUNTERS = 0x00000004
     };
 
-    MergeScannerAccessGroup(String &table_name, ScanContextPtr &scan_ctx, uint32_t flags=0);
+    /// Constructor.
+    /// @param table_name Table name
+    /// @param scan_ctx Scan context
+    /// @param flags Flags
+    MergeScannerAccessGroup(String &table_name, ScanContextPtr &scan_ctx,
+                            uint32_t flags=0);
 
+    /// Destructor.
+    /// Destroys all scanners in #m_scanners and then calls #m_release_callback
     virtual ~MergeScannerAccessGroup();
 
     void add_scanner(CellListScanner *scanner) {
@@ -353,6 +369,8 @@ namespace Hypertable {
 
   /// Shared pointer to MergeScannerAccessGroup
   typedef std::shared_ptr<MergeScannerAccessGroup> MergeScannerAccessGroupPtr;
+
+  /// @}
 
 } // namespace Hypertable
 

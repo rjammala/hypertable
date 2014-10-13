@@ -19,13 +19,19 @@
  * 02110-1301, USA.
  */
 
-#include "Common/Compat.h"
-#include "Common/Logger.h"
+/// @file
+/// Definitions for MergeScannerAccessGroup.
+/// This file contains the type definitions for MergeScannerAccessGroup, a
+/// class used to perform a scan over an access group.
 
-#include "Hypertable/Lib/Key.h"
-#include "Hypertable/Lib/Schema.h"
+#include <Common/Compat.h>
 
 #include "MergeScannerAccessGroup.h"
+
+#include <Hypertable/Lib/Key.h>
+#include <Hypertable/Lib/Schema.h>
+
+#include "Common/Logger.h"
 
 using namespace Hypertable;
 
@@ -76,7 +82,8 @@ MergeScannerAccessGroup::~MergeScannerAccessGroup() {
       m_release_callback();
   }
   catch (Hypertable::Exception &e) {
-    HT_ERROR_OUT << "Problem destroying MergeScannerAccessGroup : " << e << HT_END;
+    HT_ERROR_OUT << "Problem destroying MergeScannerAccessGroup : " << e
+                 << HT_END;
   }
 }
 

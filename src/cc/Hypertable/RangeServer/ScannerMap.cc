@@ -19,6 +19,11 @@
  * 02110-1301, USA.
  */
 
+/// @file
+/// Definitions for ScannerMap.
+/// This file contains the type definitions for ScannerMap, a class for holding
+/// outstanding range scanners.
+
 #include <Common/Compat.h>
 
 #include "ScannerMap.h"
