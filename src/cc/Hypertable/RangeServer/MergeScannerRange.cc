@@ -74,6 +74,18 @@ MergeScannerRange::MergeScannerRange(const string &table_id, ScanContextPtr &sca
   }
 }
 
+MergeScannerRange::~MergeScannerRange() {
+  try {
+    for (auto scanner : m_scanners)
+      delete scanner;
+  }
+  catch (Hypertable::Exception &e) {
+    HT_ERROR_OUT << "Problem destroying MergeScannerRange : " << e
+                 << HT_END;
+  }
+}
+
+
 void MergeScannerRange::forward() {
   int64_t cur_bytes;
   ScannerState sstate;

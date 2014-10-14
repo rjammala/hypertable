@@ -50,6 +50,10 @@ namespace Hypertable {
   public:
     MergeScannerRange(const std::string &table_id, ScanContextPtr &scan_ctx);
 
+    /// Destructor.
+    /// Destroys all scanners in #m_scanners.
+    virtual ~MergeScannerRange();
+
     void add_scanner(MergeScannerAccessGroup *scanner) {
       m_scanners.push_back(scanner);
     }
@@ -62,10 +66,26 @@ namespace Hypertable {
 
     int32_t get_skipped_rows() { return m_row_skipped; }
 
+    /// Returns number of cells input.
+    /// Calls MergeScannerAccessGroup::get_input_cells() on each scanner in
+    /// #m_scanners and returns the aggregated result.
+    /// @return number of cells input.
     int64_t get_input_cells();
+
+    /// Returns number of cells output.
+    /// Returns number of cells returned via calls to get().
+    /// @return Number of cells output.
     int64_t get_output_cells() { return m_cells_output; }
 
+    /// Returns number of bytes input.
+    /// Calls MergeScannerAccessGroup::get_input_bytes() on each scanner in
+    /// #m_scanners and returns the aggregated result.
+    /// @return number of bytes input.
     int64_t get_input_bytes();
+
+    /// Returns number of bytes output.
+    /// Returns number of bytes returned via calls to get().
+    /// @return Number of cells output.
     int64_t get_output_bytes() { return m_bytes_output; }
 
     int64_t get_disk_read();
