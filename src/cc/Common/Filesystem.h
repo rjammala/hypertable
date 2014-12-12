@@ -37,8 +37,8 @@
 #include <Common/Serializable.h>
 #include <Common/String.h>
 #include <Common/StaticBuffer.h>
-#include <Common/ReferenceCount.h>
 
+#include <memory>
 #include <vector>
 
 #define HT_DIRECT_IO_ALIGNMENT      512
@@ -65,7 +65,7 @@ namespace Hypertable {
    *
    * This abstract base class is overwritten by the various FsBrokers.
    */
-  class Filesystem : public ReferenceCount {
+  class Filesystem {
   public:
     enum OptionType { O_FLUSH = 1 };
 
@@ -538,7 +538,8 @@ namespace Hypertable {
     static String basename(String name, char separator = '/');
   };
 
-  typedef intrusive_ptr<Filesystem> FilesystemPtr;
+  /// Smart pointer to Filesystem
+  typedef std::shared_ptr<Filesystem> FilesystemPtr;
 
   inline bool operator< (const Filesystem::Dirent& lhs,
 			 const Filesystem::Dirent& rhs) {

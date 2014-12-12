@@ -246,7 +246,7 @@ cmd_select(NamespacePtr &ns, ConnectionManagerPtr &conn_manager,
         boost::algorithm::starts_with(state.scan.outfile, "fs://")) {
       // init Fs client if not done yet
       if (!fs_client)
-        fs_client = new FsBroker::Lib::Client(conn_manager, Config::properties);
+        fs_client = std::make_shared<FsBroker::Lib::Client>(conn_manager, Config::properties);
       if (boost::algorithm::starts_with(state.scan.outfile, "dfs://"))
         fout.push(FsBroker::Lib::FileSink(fs_client, state.scan.outfile.substr(6)));
       else
@@ -410,7 +410,7 @@ cmd_dump_table(NamespacePtr &ns,
         boost::algorithm::starts_with(state.scan.outfile, "fs://")) {
       // init Fs client if not done yet
       if (!fs_client)
-        fs_client = new FsBroker::Lib::Client(conn_manager, Config::properties);
+        fs_client = std::make_shared<FsBroker::Lib::Client>(conn_manager, Config::properties);
       if (boost::algorithm::starts_with(state.scan.outfile, "dfs://"))
         fout.push(FsBroker::Lib::FileSink(fs_client, state.scan.outfile.substr(6)));
       else
@@ -554,7 +554,7 @@ cmd_load_data(NamespacePtr &ns, ::uint32_t mutator_flags,
 
   // init Fs client if not done yet
   if(state.input_file_src == DFS_FILE && !fs_client)
-    fs_client = new FsBroker::Lib::Client(conn_manager, Config::properties);
+    fs_client = std::make_shared<FsBroker::Lib::Client>(conn_manager, Config::properties);
 
   lds = LoadDataSourceFactory::create(fs_client, state.input_file,
                state.input_file_src, state.header_file, state.header_file_src,

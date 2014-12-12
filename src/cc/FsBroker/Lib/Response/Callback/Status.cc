@@ -20,23 +20,29 @@
  */
 
 /// @file
-/// Definitions for Status request handler.
-/// This file contains definitions for Status, a server-side request handler
-/// used to invoke the <i>status</i> function of a file system broker
+/// Definitions for Status response callback.
+/// This file contains definitions for Status, a response callback class used
+/// to deliver results of the <i>open</i> function call back to the client.
 
 #include <Common/Compat.h>
 
 #include "Status.h"
 
-#include <AsyncComm/ResponseCallback.h>
+#include <FsBroker/Lib/Response/Parameters/Status.h>
+
+#include <AsyncComm/CommBuf.h>
 
 #include <Common/Error.h>
-#include <Common/Logger.h>
 
 using namespace Hypertable;
-using namespace Hypertable::FsBroker::Lib::Request::Handler;
+using namespace FsBroker::Lib::Response;
 
-void Status::run() {
-  Response::Callback::Status cb(m_comm, m_event);
-  m_broker->status(&cb);
+int Callback::Status::response(int32_t code, const string &output) {
+  CommHeader header;
+  header.initialize_from_request_header(m_event->header);
+  Parameters::Status params(code, output);
+  CommBufPtr cbuf( new CommBuf(header, 4 + params.encoded_length()) );
+  cbuf->append_i32(Error::OK);
+  params.encode(cbuf->get_data_ptr_address());
+  return m_comm->send_response(m_event->addr, cbuf);
 }

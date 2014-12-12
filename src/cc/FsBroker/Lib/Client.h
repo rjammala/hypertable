@@ -38,6 +38,7 @@
 #include <Common/Mutex.h>
 #include <Common/Properties.h>
 
+#include <memory>
 #include <unordered_map>
 
 namespace Hypertable {
@@ -228,7 +229,8 @@ namespace Lib {
     std::unordered_map<uint32_t, ClientBufferedReaderHandler *> m_buffered_reader_map;
   };
 
-  typedef intrusive_ptr<Client> ClientPtr;
+  /// Smart pointer to Client
+  typedef std::shared_ptr<Client> ClientPtr;
 
   /// @}
 

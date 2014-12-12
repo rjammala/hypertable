@@ -142,7 +142,7 @@ main(int ac, char *av[]) {
     String host = get_str("fs-host");
     uint16_t port = get_i16("fs-port");
 
-    FsBroker::Lib::Client *client = new FsBroker::Lib::Client(host, port, timeout);
+    FsBroker::Lib::ClientPtr client = std::make_shared<FsBroker::Lib::Client>(host, port, timeout);
 
     if (!client->wait_for_connection(timeout)) {
       HT_ERROR_OUT <<"Unable to connect to FS: "<< host <<':'<< port << HT_END;
@@ -150,6 +150,7 @@ main(int ac, char *av[]) {
     }
 
     FilesystemPtr fs = client;
+
     String testdir = format("/metalog%09d", (int)getpid());
     MetaLog::WriterPtr writer;
     MetaLog::ReaderPtr reader;
