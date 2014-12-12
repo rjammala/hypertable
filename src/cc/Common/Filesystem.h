@@ -37,9 +37,13 @@
 #include <Common/Serializable.h>
 #include <Common/String.h>
 #include <Common/StaticBuffer.h>
+#include <Common/Timer.h>
 
 #include <memory>
+#include <string>
 #include <vector>
+
+using namespace std;
 
 #define HT_DIRECT_IO_ALIGNMENT      512
 
@@ -487,6 +491,19 @@ namespace Hypertable {
      * @param dst The destination path
      */
     virtual void rename(const String &src, const String &dst) = 0;
+
+    /// Check status of filesystem
+    /// @param output Nagios-style status output text
+    /// @param timer Deadline timer
+    /// @return Nagios-style status code
+    virtual int32_t status(string &output, Timer *timer=0) = 0;
+
+    /// Decodes the response from an status request.
+    /// @param event reference to response event
+    /// @param code Address of variable to hold status code
+    /// @param output Reference to string to hold status text
+    virtual void decode_response_status(EventPtr &event, int32_t *code,
+                                        string &output) = 0;
 
     /** Decodes the response from an request that only returns an error code
      *

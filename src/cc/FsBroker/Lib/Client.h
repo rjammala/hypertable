@@ -180,14 +180,13 @@ namespace Lib {
                 DispatchHandler *handler) override;
     void rename(const String &src, const String &dst) override;
 
+    int32_t status(string &output, Timer *timer=0) override;
+    void decode_response_status(EventPtr &event, int32_t *code,
+                                string &output) override;
+
     void debug(int32_t command, StaticBuffer &serialized_parameters) override;
     void debug(int32_t command, StaticBuffer &serialized_parameters,
                DispatchHandler *handler) override;
-
-    /** Checks the status of the FS broker.  Issues a status command and
-     * waits for it to return.
-     */
-    void status();
 
     enum {
       /// Perform immediate shutdown
@@ -214,12 +213,11 @@ namespace Lib {
 
   private:
 
-    /** Sends a message to the FS broker.
-     *
-     * @param cbuf message to send
-     * @param handler response handler
-     */
-    void send_message(CommBufPtr &cbuf, DispatchHandler *handler);
+    /// Sends a message to the FS broker.
+    /// @param cbuf message to send
+    /// @param handler response handler
+    /// @param timer Deadline timer
+    void send_message(CommBufPtr &cbuf, DispatchHandler *handler, Timer *timer=0);
 
     Mutex m_mutex;
     Comm *m_comm;

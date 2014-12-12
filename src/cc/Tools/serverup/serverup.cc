@@ -145,8 +145,14 @@ namespace {
     if (!fs->wait_for_connection(wait_ms))
       HT_THROW(Error::REQUEST_TIMEOUT, "connecting to fsbroker");
 
-    HT_TRY("getting fsbroker status", fs->status());
-
+    try {
+      string output;
+      int32_t code = fs->status(output);
+    }
+    catch (Exception &e) {
+      HT_ERRORF("Status check: %s - %s", Error::get_text(e.code()), e.what());
+      _exit(1);
+    }
   }
 
   Hyperspace::Session *hyperspace;

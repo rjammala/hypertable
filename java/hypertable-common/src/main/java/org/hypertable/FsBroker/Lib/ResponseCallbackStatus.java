@@ -29,23 +29,39 @@ import org.hypertable.AsyncComm.ResponseCallback;
 import org.hypertable.Common.Error;
 import org.hypertable.Common.Serialization;
 
-public class ResponseCallbackLength extends ResponseCallback {
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Logger;
 
-  ResponseCallbackLength(Comm comm, Event event) {
+public class ResponseCallbackStatus extends ResponseCallback {
+
+  static final Logger log = Logger.getLogger("org.hypertable.FsBroker.Lib");
+
+  ResponseCallbackStatus(Comm comm, Event event) {
     super(comm, event);
   }
 
   static final byte VERSION = 1;
 
-  public int response(long length) {
-    CommHeader header = new CommHeader();
-    header.initialize_from_request_header(mEvent.header);
-    CommBuf cbuf = new CommBuf(header, 5 + Serialization.EncodedLengthVInt32(8) + 8);
-    cbuf.AppendInt(Error.OK);
-    cbuf.AppendByte(VERSION);
-    Serialization.EncodeVInt32(cbuf.data, 8);
-    cbuf.AppendLong(length);
-    return mComm.SendResponse(mEvent.addr, cbuf);
+  public int response(int code, String output) {
+    try {
+      CommHeader header = new CommHeader();
+      header.initialize_from_request_header(mEvent.header);
+      int internal_length = 4 + Serialization.EncodedLengthVStr(output);
+      CommBuf cbuf =
+        new CommBuf(header, 5 + Serialization.EncodedLengthVInt32(internal_length)
+                    + internal_length);
+      cbuf.AppendInt(Error.OK);
+      cbuf.AppendByte(VERSION);
+      Serialization.EncodeVInt32(cbuf.data, internal_length);
+      cbuf.AppendInt(code);
+      Serialization.EncodeVStr(cbuf.data, output);
+      return mComm.SendResponse(mEvent.addr, cbuf);
+    }
+    catch (UnsupportedEncodingException e) {
+      log.severe("Unsupported encoding exception caught in Status callback!");
+      System.exit(-1);
+    }
+    return Error.PROTOCOL_ERROR;
   }
 }
 
