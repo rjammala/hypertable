@@ -147,7 +147,7 @@ namespace {
 
     try {
       string output;
-      int32_t code = fs->status(output);
+      fs->status(output);
     }
     catch (Exception &e) {
       HT_ERRORF("Status check: %s - %s", Error::get_text(e.code()), e.what());

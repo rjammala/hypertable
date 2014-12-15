@@ -19,6 +19,11 @@
  * 02110-1301, USA.
  */
 
+/// @file
+/// Declarations for CommandInterpreter.
+/// This file contains declarations for CommandInterpreter, a class for
+/// executing file system client commands.
+
 #ifndef Tools_fsclient_CommandInterpreter_h
 #define Tools_fsclient_CommandInterpreter_h
 
@@ -28,21 +33,80 @@
 
 #include "AsyncComm/Comm.h"
 
+#include <memory>
+#include <string>
+#include <unordered_map>
+
 namespace Hypertable {
 namespace fsclient {
 
-  /// Command interpreter for ht_fsclient
+  /// @addtogroup fsclient
+  /// @{
+
+  /// Command interpreter for %fsclient
   class CommandInterpreter : public Hypertable::CommandInterpreter {
   public:
-    CommandInterpreter(MasterClientPtr &master);
+
+    /// Constructor.
+    /// Initializes #m_client with <code>client</code> and #m_nowait with
+    /// <code>nowait</code>.  Also loads help text with a call to
+    /// load_help_text().
+    /// @param client File system client
+    /// @param nowait No wait flag
+    CommandInterpreter(FsBroker::Lib::ClientPtr &client, bool nowait=false)
+      : m_client(client), m_nowait(nowait) {
+      load_help_text();
+    };
 
     int execute_line(const String &line) override;
 
   private:
-    FsBroker::Lib::Client MasterClientPtr m_master;
+
+    class ParseResult {
+    public:
+      void clear();
+      int32_t command {};
+      std::vector<std::string> args;
+      int64_t offset {};
+    };
+
+    /// Parses a single command.
+    /// @param line String containing command to parse
+    /// @param result Reference to variable to hold parse result
+    void parse_line(const String &line, ParseResult &result) const;
+
+    /// Loads help text.
+    /// Populates #m_help_text with help text for supported commands.
+    void load_help_text();
+
+    /// Displays help text for command.
+    /// Searches #m_help_text for help text for <code>command</code> and
+    /// displays it if found.
+    /// @param command Command for which to display help text
+    void display_help_text(const std::string &command) const;
+
+    /// Displays usage for command.
+    /// Searches #m_help_text for help text for <code>command</code> and
+    /// displays the first line, which is the command usage.
+    /// @param command Command for which to display help text
+    void display_usage(const std::string &command) const;
+
+    void parse_error(const std::string &command) const;
+
+    /// File system client
+    FsBroker::Lib::ClientPtr m_client;
+
+    /// Map of help text
+    std::unordered_map<std::string, const char **> m_help_text;
+
+    /// Don't wait for certain commands to complete (e.g. shutdown)
+    bool m_nowait {};
   };
 
-  typedef intrusive_ptr<CommandInterpreter> CommandInterpreterPtr;
+  /// Smart pointer to CommandInterpreter
+  typedef std::shared_ptr<CommandInterpreter> CommandInterpreterPtr;
+
+  /// @}
 
 }}
 

@@ -198,9 +198,9 @@ task: kill {
 # installation.
 task: clean_masters roles: master {
   ssh: {
-    ${INSTALL_PREFIX}/current/bin/start-fsbroker.sh ${FS} ${CONFIG}
-    ${INSTALL_PREFIX}/current/bin/clean-database.sh ${CONFIG}
-    ${INSTALL_PREFIX}/current/bin/stop-monitoring.sh
+    ${INSTALL_PREFIX}/current/bin/ht-start-fsbroker.sh ${FS} ${CONFIG} || exit $?
+    ${INSTALL_PREFIX}/current/bin/clean-database.sh ${CONFIG} || exit $?
+    ${INSTALL_PREFIX}/current/bin/stop-monitoring.sh || exit $?
   }
 }
 
@@ -267,9 +267,9 @@ task: start_hyperspace roles: hyperspace {
 # monitoring server from the current installation.
 task: start_masters roles: master {
   ssh: {
-    ${INSTALL_PREFIX}/current/bin/start-fsbroker.sh ${FS} ${CONFIG}
-    ${INSTALL_PREFIX}/current/bin/start-master.sh ${CONFIG}
-    ${INSTALL_PREFIX}/current/bin/start-monitoring.sh
+    ${INSTALL_PREFIX}/current/bin/ht-start-fsbroker.sh ${FS} ${CONFIG} || exit $?
+    ${INSTALL_PREFIX}/current/bin/start-master.sh ${CONFIG} || exit $?
+    ${INSTALL_PREFIX}/current/bin/start-monitoring.sh || exit $?
   }
 }
 
@@ -279,8 +279,8 @@ task: start_masters roles: master {
 # random start delay of 5000 milliseconds.
 task: start_slaves roles: slave {
   ssh: random-start-delay=5000 {
-    ${INSTALL_PREFIX}/current/bin/start-fsbroker.sh ${FS} ${CONFIG}
-    ${INSTALL_PREFIX}/current/bin/start-rangeserver.sh ${CONFIG}
+    ${INSTALL_PREFIX}/current/bin/ht-start-fsbroker.sh ${FS} ${CONFIG} || exit $?
+    ${INSTALL_PREFIX}/current/bin/start-rangeserver.sh ${CONFIG} || exit $?
   }
 }
 
@@ -296,8 +296,8 @@ task: start_thriftbrokers_primary roles: master, slave {
 # Start ThriftBrokers on ThriftBroker-only servers.
 task: start_thriftbrokers_only roles: thriftbroker {
   ssh: random-start-delay=5000 {
-    ${INSTALL_PREFIX}/current/bin/start-fsbroker.sh ${FS} ${CONFIG}
-    ${INSTALL_PREFIX}/current/bin/start-thriftbroker.sh ${CONFIG} ${THRIFTBROKER_ARGS}
+    ${INSTALL_PREFIX}/current/bin/ht-start-fsbroker.sh ${FS} ${CONFIG} || exit $?
+    ${INSTALL_PREFIX}/current/bin/start-thriftbroker.sh ${CONFIG} ${THRIFTBROKER_ARGS} || exit $?
   }
 }
 

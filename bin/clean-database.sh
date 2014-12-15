@@ -60,8 +60,8 @@ case $confirm in
     TOPLEVEL="/"`$HYPERTABLE_HOME/bin/get_property $@ Hypertable.Directory`"/"
     TOPLEVEL=`echo $TOPLEVEL | tr -s "/" | sed 's/.$//g'`
 
-    $HYPERTABLE_HOME/bin/fsclient --timeout 60000 --eval "rmdir $TOPLEVEL/servers" "$@"
-    $HYPERTABLE_HOME/bin/fsclient --timeout 60000 --eval "rmdir $TOPLEVEL/tables" "$@"
+    $HYPERTABLE_HOME/bin/fsclient --timeout 60000 -e "rmdir $TOPLEVEL/servers" "$@"
+    $HYPERTABLE_HOME/bin/fsclient --timeout 60000 -e "rmdir $TOPLEVEL/tables" "$@"
     echo "Removed $TOPLEVEL/servers in FS"
     echo "Removed $TOPLEVEL/tables in FS"
     /bin/rm -rf $RUNTIME_ROOT/hyperspace/*

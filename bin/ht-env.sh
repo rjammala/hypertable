@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2007-2012 Hypertable, Inc.
+# Copyright (C) 2007-2014 Hypertable, Inc.
 #
 # This file is part of Hypertable.
 #
@@ -150,6 +150,39 @@ wait_for_server_up() {
 
 wait_for_server_shutdown() {
   wait_for_server "shutdown" "$@"
+}
+
+wait_for_ok() {
+  server=$1; shift
+  server_desc=$1; shift
+  max_retries=${max_retries:-40}
+  report_interval=${report_interval:-5}
+  address=`$HYPERTABLE_HOME/bin/serverup --display-address=true $server`
+  local silent
+
+  if [ "$address" ]; then
+    address=" ($address)";
+  fi
+
+  retries=0
+  $HYPERTABLE_HOME/bin/ht-check-${server}.sh "$@"
+  ret=$?
+  while [ $ret -ne 0 ] && [ $retries -le $max_retries ]; do
+    let retries=retries+1
+    let report=retries%$report_interval
+    silent="--silent"
+    if [ $report == 0 ]; then
+        silent=
+    fi
+    sleep 1
+    $HYPERTABLE_HOME/bin/ht-check-${server}.sh $silent "$@"
+    ret=$?
+  done
+  if [ -n "$silent" ]; then
+    ht-check-${server}.sh "$@"
+    ret=$?
+  fi
+  return $ret
 }
 
 set_start_vars() {
