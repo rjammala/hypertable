@@ -43,13 +43,14 @@ wait_for_server_shutdown thriftbroker "thrift broker" "$@" &
 wait_for_server_shutdown rangeserver "range server" "$@" &
 wait_for_server_shutdown master "hypertable master" "$@" &
 wait_for_server_shutdown hyperspace "hyperspace" "$@" &
+wait
 
 case $confirm in
   y|Y)
     #
     # Clear state
     #
-    check_server "$@" fsbroker 
+    $HYPERTABLE_HOME/bin/ht-check-fsbroker.sh --silent "$@"
     if [ $? != 0 ] ; then
       echo "ERROR: FsBroker not running, database not cleaned"
       # remove local stuff anyway.
@@ -79,7 +80,4 @@ esac
 #
 # Stop fsbroker
 #
-stop_server fsbroker
-sleep 1
-wait_for_server_shutdown fsbroker "FS broker" "$@" &
-wait
+$HYPERTABLE_HOME/bin/ht-stop-fsbroker.sh "$@"

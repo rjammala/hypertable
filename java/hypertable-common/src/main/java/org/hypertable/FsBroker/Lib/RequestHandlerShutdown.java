@@ -77,9 +77,6 @@ public class RequestHandlerShutdown extends ApplicationHandler {
       synchronized (this) {
         wait(2000);
       }
-
-      System.exit(0);
-
     }
     catch (Exception e) {
       int error = cb.error(Error.PROTOCOL_ERROR, e.getMessage());
@@ -88,6 +85,7 @@ public class RequestHandlerShutdown extends ApplicationHandler {
         log.severe("Problem sending (SHUTDOWN) error back to client - "
                    + Error.GetText(error));
     }
+    System.exit(0);
   }
 
   private Comm mComm;

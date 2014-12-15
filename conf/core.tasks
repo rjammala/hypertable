@@ -96,7 +96,8 @@ task: stop_thriftbrokers_primary roles: master, slave {
 # Stops the FSBroker and ThriftBroker from the current installation.
 task: stop_thriftbrokers_only roles: thriftbroker {
   ssh: {
-    ${INSTALL_PREFIX}/current/bin/stop-servers.sh thriftbroker fsbroker
+    ${INSTALL_PREFIX}/current/bin/stop-servers.sh thriftbroker || exit $?
+    ${INSTALL_PREFIX}/current/bin/ht-stop-fsbroker.sh ${CONFIG} || exit $?
   }
 }
 
@@ -114,7 +115,7 @@ task: stop_thriftbrokers {
 # Stops FSBrokers in the current installation.
 task: stop_fsbrokers roles: master, slave {
   ssh: {
-    ${INSTALL_PREFIX}/current/bin/stop-servers.sh fsbroker
+    ${INSTALL_PREFIX}/current/bin/ht-stop-fsbroker.sh ${CONFIG} || exit $?
   }
 }
 

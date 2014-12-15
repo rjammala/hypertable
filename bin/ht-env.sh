@@ -158,16 +158,16 @@ wait_for_ok() {
   max_retries=${max_retries:-40}
   report_interval=${report_interval:-5}
   address=`$HYPERTABLE_HOME/bin/serverup --display-address=true $server`
-  local silent
+  local silent="--silent"
 
   if [ "$address" ]; then
     address=" ($address)";
   fi
 
   retries=0
-  $HYPERTABLE_HOME/bin/ht-check-${server}.sh "$@"
+  $HYPERTABLE_HOME/bin/ht-check-${server}.sh $silent "$@"
   ret=$?
-  while [ $ret -ne 0 ] && [ $retries -le $max_retries ]; do
+  while [ $ret -ne 0 ] && [ $retries -lt $max_retries ]; do
     let retries=retries+1
     let report=retries%$report_interval
     silent="--silent"
@@ -179,11 +179,45 @@ wait_for_ok() {
     ret=$?
   done
   if [ -n "$silent" ]; then
-    ht-check-${server}.sh "$@"
+    $HYPERTABLE_HOME/bin/ht-check-${server}.sh "$@"
     ret=$?
   fi
   return $ret
 }
+
+
+wait_for_critical() {
+  server=$1; shift
+  server_desc=$1; shift
+  max_retries=${max_retries:-40}
+  report_interval=${report_interval:-5}
+  address=`$HYPERTABLE_HOME/bin/serverup --display-address=true $server`
+
+  if [ "$address" ]; then
+    address=" ($address)";
+  fi
+
+  retries=0
+  $HYPERTABLE_HOME/bin/ht-check-${server}.sh --silent "$@"
+  ret=$?
+  while [ $ret -ne 2 ] && [ $retries -lt $max_retries ]; do
+    let retries=retries+1
+    let report=retries%$report_interval
+    [ $report == 0 ] && echo "Waiting for $server_desc$address to shutdown..."
+    sleep 1
+    $HYPERTABLE_HOME/bin/ht-check-${server}.sh --silent "$@"
+    ret=$?
+  done
+  if [ $ret -ne 2 ]; then
+    echo "ERROR: $server_desc did not shutdown"
+    check_pidfile `server_pidfile $server`
+    return 1
+  else
+    echo "Shutdown $server_desc complete"
+    return 0
+  fi
+}
+
 
 set_start_vars() {
   pidfile=$RUNTIME_ROOT/run/$1.pid

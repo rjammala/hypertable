@@ -209,9 +209,7 @@ fi
 # Stop FS Broker
 #
 if [ $STOP_FSBROKER == "true" ] ; then
-  echo "Sending shutdown command to FS broker"
-  echo 'shutdown' | $HYPERTABLE_HOME/bin/ht fsclient --nowait --batch
-  stop_server fsbroker
+  $HYPERTABLE_HOME/bin/ht-stop-fsbroker.sh
 fi
 
 #
@@ -228,13 +226,6 @@ sleep 1
 #
 if [ $STOP_THRIFTBROKER == "true" ] ; then
   wait_for_server_shutdown thriftbroker "thrift broker" "$@" &
-fi
-
-#
-# wait for FS Broker shutdown
-#
-if [ $STOP_FSBROKER == "true" ] ; then
-  wait_for_server_shutdown fsbroker "FS broker" "$@" &
 fi
 
 #
