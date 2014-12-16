@@ -105,7 +105,7 @@ fi
 set_start_vars FsBroker.$FS
 check_pidfile $pidfile && exit 0
 
-check_server "$@" fsbroker 
+$HYPERTABLE_HOME/bin/ht-check-fsbroker.sh --silent "$@"
 if [ $? != 0 ] ; then
   if [ "$FS" == "hadoop" ] ; then
     if [ "n$VALGRIND" != "n" ] ; then

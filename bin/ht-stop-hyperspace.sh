@@ -25,5 +25,5 @@ export HYPERTABLE_HOME=$(cd `dirname "$0"`/.. && pwd)
 . $HYPERTABLE_HOME/bin/ht-env.sh
 
 stop_server hyperspace
-wait_for_critical fsbroker "FS Broker" "$@"
+wait_for_critical hyperspace "Hyperspace" "$@"
 

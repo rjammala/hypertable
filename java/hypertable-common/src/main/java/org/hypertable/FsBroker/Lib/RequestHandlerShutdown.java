@@ -28,6 +28,7 @@ import org.hypertable.AsyncComm.ApplicationQueue;
 import org.hypertable.AsyncComm.Comm;
 import org.hypertable.AsyncComm.Event;
 import org.hypertable.AsyncComm.ResponseCallback;
+import org.hypertable.AsyncComm.ReactorFactory;
 import org.hypertable.Common.Error;
 import org.hypertable.Common.Serialization;
 
@@ -74,9 +75,7 @@ public class RequestHandlerShutdown extends ApplicationHandler {
 
       cb.response_ok();
 
-      synchronized (this) {
-        wait(2000);
-      }
+      ReactorFactory.Shutdown();
     }
     catch (Exception e) {
       int error = cb.error(Error.PROTOCOL_ERROR, e.getMessage());

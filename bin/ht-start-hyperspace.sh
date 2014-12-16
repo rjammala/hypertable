@@ -43,7 +43,7 @@ done
 set_start_vars Hyperspace
 check_pidfile $pidfile && exit 0
 
-check_server "$@" hyperspace
+$HYPERTABLE_HOME/bin/ht-check-hyperspace.sh --silent "$@"
 if [ $? != 0 ] ; then
   exec_server Hyperspace.Master --verbose "$@"
   wait_for_ok hyperspace "Hyperspace" "$@"

@@ -33,9 +33,10 @@ if tty > /dev/null && [ $# == 1 ]; then
 fi
 
 # Stop hyperspace
-stop_server hyperspace
-sleep 1
-wait_for_server_shutdown hyperspace "hyperspace" "$@" &
+$HYPERTABLE_HOME/bin/ht-stop-hyperspace.sh
+if [ $? -ne 0 ]; then
+  exit 2
+fi
 
 case $confirm in
   y|Y)
@@ -47,5 +48,3 @@ case $confirm in
     ;;
   *) echo "Hyperspace not cleared";;
 esac
-
-wait

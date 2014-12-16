@@ -152,7 +152,7 @@ task: stop_monitoring roles: master {
 # Stops Hyperspace in the current installation.
 task: stop_hyperspace roles: hyperspace {
   ssh: {
-    ${INSTALL_PREFIX}/current/bin/stop-hyperspace.sh
+    ${INSTALL_PREFIX}/current/bin/ht-stop-hyperspace.sh ${CONFIG} || echo $?
   }
 }
 
@@ -206,11 +206,11 @@ task: clean_masters roles: master {
 }
 
 
-# Clean Hyperspace state.  Runs the clean-hyperspace.sh script from the current
-# installation.
+# Clean Hyperspace state.  Runs the ht-clean-hyperspace.sh script from the
+# current installation.
 task: clean_hyperspace roles: hyperspace {
   ssh: {
-    ${INSTALL_PREFIX}/current/bin/clean-hyperspace.sh
+    ${INSTALL_PREFIX}/current/bin/ht-clean-hyperspace.sh
   }
 }
 
@@ -255,11 +255,11 @@ task: start_monitoring roles: master {
 }
 
 
-# Start hyperspace.  Starts hyperspace by running the start-hyperspace.sh script
+# Start hyperspace.  Starts hyperspace by running the ht-start-hyperspace.sh script
 # from the current installation.
 task: start_hyperspace roles: hyperspace {
   ssh: {
-    ${INSTALL_PREFIX}/current/bin/start-hyperspace.sh ${CONFIG}
+    ${INSTALL_PREFIX}/current/bin/ht-start-hyperspace.sh ${CONFIG} || exit $?
   }
 }
 
