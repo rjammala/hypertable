@@ -216,7 +216,7 @@ fi
 # Stop Hyperspace
 #
 if [ $STOP_HYPERSPACE == "true" ] ; then
-  stop_server hyperspace 
+  $HYPERTABLE_HOME/bin/ht-stop-hyperspace.sh
 fi
 
 sleep 1

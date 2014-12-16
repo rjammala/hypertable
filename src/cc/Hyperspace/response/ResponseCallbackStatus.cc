@@ -19,32 +19,23 @@
  * 02110-1301, USA.
  */
 
-#ifndef HYPERSPACE_REQUESTHANDLERSTATUS_H
-#define HYPERSPACE_REQUESTHANDLERSTATUS_H
+#include "Common/Compat.h"
+#include "Common/Error.h"
+#include "Common/Serialization.h"
 
-#include "AsyncComm/ApplicationHandler.h"
-#include "AsyncComm/Comm.h"
-#include "AsyncComm/Event.h"
+#include "AsyncComm/CommBuf.h"
 
-namespace Hyperspace {
-  using namespace Hypertable;
+#include "ResponseCallbackStatus.h"
 
-  class Master;
+using namespace Hyperspace;
+using namespace Hypertable;
 
-  class RequestHandlerStatus : public ApplicationHandler {
-  public:
-  RequestHandlerStatus(Comm *comm, Master *master, EventPtr &event)
-    : ApplicationHandler(event), m_comm(comm), m_master(master)
-    { }
-
-    virtual void run();
-
-  private:
-    Comm *m_comm;
-    Master *m_master;
-
-  };
-
+int ResponseCallbackStatus::response(int32_t code, const std::string &output) {
+  CommHeader header;
+  header.initialize_from_request_header(m_event->header);
+  CommBufPtr cbp(new CommBuf(header, 8 + Serialization::encoded_length_vstr(output)));
+  cbp->append_i32(Error::OK);
+  cbp->append_i32(code);
+  cbp->append_vstr(output);
+  return m_comm->send_response(m_event->addr, cbp);
 }
-
-#endif // HYPERSPACE_REQUESTHANDLERSTATUS_H

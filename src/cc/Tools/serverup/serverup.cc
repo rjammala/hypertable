@@ -22,6 +22,7 @@
 #include "Common/Compat.h"
 #include <cstdlib>
 #include <iostream>
+#include <string>
 
 #include <boost/algorithm/string.hpp>
 
@@ -181,8 +182,14 @@ namespace {
     if (!hyperspace->wait_for_connection(max_wait_ms))
       HT_THROW(Error::REQUEST_TIMEOUT, "connecting to hyperspace");
 
-    if ((error = hyperspace->status(&timer)) != Error::OK &&
-      error != Error::HYPERSPACE_NOT_MASTER_LOCATION) {
+    int32_t code;
+    string output;
+    error = hyperspace->status(&code, output, &timer);
+    if (error == Error::OK) {
+      if (code != 0)
+        HT_THROW(Error::FAILED_EXPECTATION, "getting hyperspace status");
+    }
+    else if (error != Error::HYPERSPACE_NOT_MASTER_LOCATION) {
       HT_THROW(error, "getting hyperspace status");
     }
   }

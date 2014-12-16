@@ -108,7 +108,7 @@ $HYPERTABLE_HOME/bin/ht-start-fsbroker.sh $FS $@ &
 #
 # Start Hyperspace
 #
-$HYPERTABLE_HOME/bin/start-hyperspace.sh $HYPERSPACE_OPTS $@
+$HYPERTABLE_HOME/bin/ht-start-hyperspace.sh $HYPERSPACE_OPTS $@ &
 
 wait
 

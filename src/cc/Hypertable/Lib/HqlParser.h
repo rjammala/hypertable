@@ -117,6 +117,7 @@ namespace Hypertable {
       COMMAND_DUMP_PSEUDO_TABLE,
       COMMAND_SET,
       COMMAND_REBUILD_INDICES,
+      COMMAND_STATUS,
       COMMAND_MAX
     };
 
@@ -2621,6 +2622,7 @@ namespace Hypertable {
           Token SET          = as_lower_d["set"];
           Token REBUILD      = as_lower_d["rebuild"];
           Token INDICES      = as_lower_d["indices"];
+          Token STATUS       = as_lower_d["status"];
 
           /**
            * Start grammar definition
@@ -2702,6 +2704,7 @@ namespace Hypertable {
             | close_statement[set_command(self.state, COMMAND_CLOSE)]
             | shutdown_statement[set_command(self.state, COMMAND_SHUTDOWN)]
             | shutdown_master_statement[set_command(self.state, COMMAND_SHUTDOWN_MASTER)]
+            | status_statement[set_command(self.state, COMMAND_STATUS)]
             | drop_range_statement[set_command(self.state, COMMAND_DROP_RANGE)]
             | replay_start_statement[set_command(self.state,
                 COMMAND_REPLAY_BEGIN)]
@@ -2838,6 +2841,10 @@ namespace Hypertable {
 
           shutdown_master_statement
             = SHUTDOWN >> MASTER
+            ;
+
+          status_statement
+            = STATUS
             ;
 
           fetch_scanblock_statement
@@ -3474,6 +3481,7 @@ namespace Hypertable {
           BOOST_SPIRIT_DEBUG_RULE(close_statement);
           BOOST_SPIRIT_DEBUG_RULE(shutdown_statement);
           BOOST_SPIRIT_DEBUG_RULE(shutdown_master_statement);
+          BOOST_SPIRIT_DEBUG_RULE(status_statement);
           BOOST_SPIRIT_DEBUG_RULE(drop_range_statement);
           BOOST_SPIRIT_DEBUG_RULE(replay_start_statement);
           BOOST_SPIRIT_DEBUG_RULE(replay_log_statement);
@@ -3543,7 +3551,7 @@ namespace Hypertable {
           metadata_sync_statement, metadata_sync_option_spec, stop_statement,
           range_type, table_identifier, pseudo_table_reference,
           dump_pseudo_table_statement, set_statement, set_variable_spec,
-          rebuild_indices_statement, index_type_spec;
+          rebuild_indices_statement, index_type_spec, status_statement;
       };
 
       ParserState &state;

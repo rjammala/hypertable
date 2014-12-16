@@ -1,4 +1,3 @@
-SESSION CALLBACK: Safe
 echo;
 
 echo << BasicTest >>;

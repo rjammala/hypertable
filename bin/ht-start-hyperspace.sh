@@ -40,4 +40,13 @@ while [ "$1" != "${1##[-+]}" ]; do
   esac
 done
 
-start_server hyperspace Hyperspace.Master Hyperspace "$@"
+set_start_vars Hyperspace
+check_pidfile $pidfile && exit 0
+
+check_server "$@" hyperspace
+if [ $? != 0 ] ; then
+  exec_server Hyperspace.Master --verbose "$@"
+  wait_for_ok hyperspace "Hyperspace" "$@"
+else
+  echo "WARNING: Hyperspace already running."
+fi
