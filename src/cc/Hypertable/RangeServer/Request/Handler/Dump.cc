@@ -19,40 +19,32 @@
  * 02110-1301, USA.
  */
 
-#ifndef Hypertable_RangeServer_ConnectionHandler_h
-#define Hypertable_RangeServer_ConnectionHandler_h
+#include <Common/Compat.h>
 
-#include "RangeServer.h"
+#include "Dump.h"
 
-#include <AsyncComm/ApplicationQueue.h>
-#include <AsyncComm/DispatchHandler.h>
+#include <Hypertable/RangeServer/RangeServer.h>
 
-namespace Hypertable {
-class Comm;
-namespace RangeServer {
+#include <Common/Serialization.h>
 
-  /// @addtogroup RangeServer
-  /// @{
+using namespace Hypertable;
+using namespace Hypertable::RangeServer::Request::Handler;
 
-  class ConnectionHandler : public DispatchHandler {
-  public:
+void Dump::run() {
+  ResponseCallback cb(m_comm, m_event);
+  const uint8_t *decode_ptr = m_event->payload;
+  size_t decode_remain = m_event->payload_len;
+  const char *outfile = 0;
+  bool nokeys;
 
-    ConnectionHandler(Comm *comm, ApplicationQueuePtr &aq, Apps::RangeServerPtr rs)
-      : m_comm(comm), m_app_queue(aq), m_range_server(rs) {
-    }
+  try {
+    outfile = Serialization::decode_vstr(&decode_ptr, &decode_remain);
+    nokeys = Serialization::decode_bool(&decode_ptr, &decode_remain);
+    m_range_server->dump(&cb, outfile, nokeys);
+  }
+  catch (Exception &e) {
+    HT_ERROR_OUT << e << HT_END;
+    cb.error(e.code(), e.what());
+  }
 
-    virtual void handle(EventPtr &event);
-
-  private:
-    Comm *m_comm {};
-    ApplicationQueuePtr m_app_queue;
-    Apps::RangeServerPtr m_range_server;
-    bool m_shutdown {};
-  };
-
-  /// @}
-
-}}
-
-#endif // Hypertable_RangeServer_ConnectionHandler_h
-
+}

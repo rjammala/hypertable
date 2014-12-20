@@ -1,5 +1,5 @@
-/** -*- c++ -*-
- * Copyright (C) 2007-2012 Hypertable, Inc.
+/*
+ * Copyright (C) 2007-2014 Hypertable, Inc.
  *
  * This file is part of Hypertable.
  *
@@ -35,7 +35,7 @@ using namespace Hypertable::Config;
 /**
  *
  */
-GroupCommitTimerHandler::GroupCommitTimerHandler(Comm *comm, RangeServer *range_server,
+GroupCommitTimerHandler::GroupCommitTimerHandler(Comm *comm, Apps::RangeServer *range_server,
                                                  ApplicationQueuePtr &app_queue) 
   : m_comm(comm), m_range_server(range_server), m_app_queue(app_queue),
     m_shutdown(false), m_shutdown_complete(false) {

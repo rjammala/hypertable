@@ -19,40 +19,45 @@
  * 02110-1301, USA.
  */
 
-#ifndef Hypertable_RangeServer_ConnectionHandler_h
-#define Hypertable_RangeServer_ConnectionHandler_h
+#ifndef Hypertable_RangeServer_Response_Callback_PhantomUpdate_h
+#define Hypertable_RangeServer_Response_Callback_PhantomUpdate_h
 
-#include "RangeServer.h"
+#include <Hypertable/Lib/Types.h>
 
-#include <AsyncComm/ApplicationQueue.h>
-#include <AsyncComm/DispatchHandler.h>
+#include <AsyncComm/Event.h>
+#include <AsyncComm/ResponseCallback.h>
 
 namespace Hypertable {
-class Comm;
 namespace RangeServer {
+namespace Response {
+namespace Callback {
 
-  /// @addtogroup RangeServer
+  /// @addtogroup RangeServerResponseCallback
   /// @{
 
-  class ConnectionHandler : public DispatchHandler {
+  class PhantomUpdate : public ResponseCallback {
   public:
-
-    ConnectionHandler(Comm *comm, ApplicationQueuePtr &aq, Apps::RangeServerPtr rs)
-      : m_comm(comm), m_app_queue(aq), m_range_server(rs) {
+    PhantomUpdate(Comm *comm, EventPtr &event)
+      : ResponseCallback(comm, event) {
+    }
+    
+    void initialize(const QualifiedRangeSpec &range, uint32_t fragment) {
+      m_range=range;
+      m_fragment=fragment;
     }
 
-    virtual void handle(EventPtr &event);
+    int response();
+    virtual int error(int error, const String &msg);
+    virtual int response_ok();
 
   private:
-    Comm *m_comm {};
-    ApplicationQueuePtr m_app_queue;
-    Apps::RangeServerPtr m_range_server;
-    bool m_shutdown {};
+    QualifiedRangeSpec m_range;
+    uint32_t m_fragment;
   };
 
   /// @}
 
-}}
+}}}}
 
-#endif // Hypertable_RangeServer_ConnectionHandler_h
 
+#endif // HYPERTABLE_RESPONSECALLBACKPHANTOMUPDATE_H

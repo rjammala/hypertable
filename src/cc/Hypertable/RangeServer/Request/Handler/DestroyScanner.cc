@@ -19,40 +19,35 @@
  * 02110-1301, USA.
  */
 
-#ifndef Hypertable_RangeServer_ConnectionHandler_h
-#define Hypertable_RangeServer_ConnectionHandler_h
+#include <Common/Compat.h>
 
-#include "RangeServer.h"
+#include "DestroyScanner.h"
 
-#include <AsyncComm/ApplicationQueue.h>
-#include <AsyncComm/DispatchHandler.h>
+#include <Hypertable/RangeServer/RangeServer.h>
 
-namespace Hypertable {
-class Comm;
-namespace RangeServer {
+#include <Hypertable/Lib/Types.h>
 
-  /// @addtogroup RangeServer
-  /// @{
+#include <AsyncComm/ResponseCallback.h>
 
-  class ConnectionHandler : public DispatchHandler {
-  public:
+#include <Common/Error.h>
+#include <Common/Logger.h>
+#include <Common/Serialization.h>
 
-    ConnectionHandler(Comm *comm, ApplicationQueuePtr &aq, Apps::RangeServerPtr rs)
-      : m_comm(comm), m_app_queue(aq), m_range_server(rs) {
-    }
+using namespace Hypertable;
+using namespace Hypertable::RangeServer::Request::Handler;
 
-    virtual void handle(EventPtr &event);
+void DestroyScanner::run() {
+  ResponseCallback cb(m_comm, m_event);
+  const uint8_t *decode_ptr = m_event->payload;
+  size_t decode_remain = m_event->payload_len;
 
-  private:
-    Comm *m_comm {};
-    ApplicationQueuePtr m_app_queue;
-    Apps::RangeServerPtr m_range_server;
-    bool m_shutdown {};
-  };
+  try {
+    uint32_t scanner_id = Serialization::decode_i32(&decode_ptr, &decode_remain);
 
-  /// @}
-
-}}
-
-#endif // Hypertable_RangeServer_ConnectionHandler_h
-
+    m_range_server->destroy_scanner(&cb, scanner_id);
+  }
+  catch (Exception &e) {
+    HT_ERROR_OUT << e << HT_END;
+    cb.error(e.code(), "Error handling DestroyScanner message");
+  }
+}

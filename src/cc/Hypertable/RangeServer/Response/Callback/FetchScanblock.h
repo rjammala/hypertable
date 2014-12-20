@@ -19,40 +19,32 @@
  * 02110-1301, USA.
  */
 
-#ifndef Hypertable_RangeServer_ConnectionHandler_h
-#define Hypertable_RangeServer_ConnectionHandler_h
+#ifndef Hypertable_RangeServer_Response_Callback_FetchScanblock_h
+#define Hypertable_RangeServer_Response_Callback_FetchScanblock_h
 
-#include "RangeServer.h"
+#include <Hypertable/Lib/ProfileDataScanner.h>
 
-#include <AsyncComm/ApplicationQueue.h>
-#include <AsyncComm/DispatchHandler.h>
+#include <AsyncComm/ResponseCallback.h>
 
 namespace Hypertable {
-class Comm;
 namespace RangeServer {
+namespace Response {
+namespace Callback {
 
-  /// @addtogroup RangeServer
+  /// @addtogroup RangeServerResponseCallback
   /// @{
 
-  class ConnectionHandler : public DispatchHandler {
+  class FetchScanblock : public ResponseCallback {
   public:
+    FetchScanblock(Comm *comm, EventPtr &event)
+      : ResponseCallback(comm, event) { }
 
-    ConnectionHandler(Comm *comm, ApplicationQueuePtr &aq, Apps::RangeServerPtr rs)
-      : m_comm(comm), m_app_queue(aq), m_range_server(rs) {
-    }
-
-    virtual void handle(EventPtr &event);
-
-  private:
-    Comm *m_comm {};
-    ApplicationQueuePtr m_app_queue;
-    Apps::RangeServerPtr m_range_server;
-    bool m_shutdown {};
+    int response(short moreflag, int32_t id, StaticBuffer &ext,
+                 ProfileDataScanner &profile_data);
   };
 
   /// @}
 
-}}
+}}}}
 
-#endif // Hypertable_RangeServer_ConnectionHandler_h
-
+#endif // Hypertable_RangeServer_Response_Callback_FetchScanblock_h

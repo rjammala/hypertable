@@ -32,14 +32,16 @@
 
 namespace Hypertable {
 
-  class RangeServer;
+  namespace Apps {
+    class RangeServer;
+  }
 
   /**
    */
   class GroupCommitTimerHandler : public DispatchHandler {
 
   public:
-    GroupCommitTimerHandler(Comm *comm, RangeServer *range_server, ApplicationQueuePtr &app_queue);
+    GroupCommitTimerHandler(Comm *comm, Apps::RangeServer *range_server, ApplicationQueuePtr &app_queue);
     virtual void handle(Hypertable::EventPtr &event_ptr);
     void shutdown();
 
@@ -52,7 +54,7 @@ namespace Hypertable {
   private:
     Mutex         m_mutex;
     Comm         *m_comm;
-    RangeServer  *m_range_server;
+    Apps::RangeServer  *m_range_server;
     ApplicationQueuePtr m_app_queue;
     int32_t       m_commit_interval;
     boost::condition m_shutdown_cond;

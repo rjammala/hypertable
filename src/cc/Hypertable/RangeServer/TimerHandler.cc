@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2013 Hypertable, Inc.
+ * Copyright (C) 2007-2014 Hypertable, Inc.
  *
  * This file is part of Hypertable.
  *
@@ -51,7 +51,7 @@ using namespace Hypertable::Config;
 /**
  *
  */
-TimerHandler::TimerHandler(Comm *comm, RangeServer *range_server)
+TimerHandler::TimerHandler(Comm *comm, Apps::RangeServer *range_server)
   : m_comm(comm), m_range_server(range_server),
     m_shutdown(false), m_shutdown_complete(false),
     m_immediate_maintenance_scheduled(false), m_app_queue_paused(false),

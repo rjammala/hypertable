@@ -1,4 +1,4 @@
-/* -*- c++ -*-
+/*
  * Copyright (C) 2007-2014 Hypertable, Inc.
  *
  * This file is part of Hypertable.
@@ -19,40 +19,22 @@
  * 02110-1301, USA.
  */
 
-#ifndef Hypertable_RangeServer_ConnectionHandler_h
-#define Hypertable_RangeServer_ConnectionHandler_h
+#include <Common/Compat.h>
 
-#include "RangeServer.h"
+#include "GetStatistics.h"
 
-#include <AsyncComm/ApplicationQueue.h>
-#include <AsyncComm/DispatchHandler.h>
+#include <AsyncComm/CommBuf.h>
+#include <AsyncComm/CommHeader.h>
 
-namespace Hypertable {
-class Comm;
-namespace RangeServer {
+#include <Common/Error.h>
 
-  /// @addtogroup RangeServer
-  /// @{
+using namespace Hypertable;
+using namespace Hypertable::RangeServer::Response::Callback;
 
-  class ConnectionHandler : public DispatchHandler {
-  public:
-
-    ConnectionHandler(Comm *comm, ApplicationQueuePtr &aq, Apps::RangeServerPtr rs)
-      : m_comm(comm), m_app_queue(aq), m_range_server(rs) {
-    }
-
-    virtual void handle(EventPtr &event);
-
-  private:
-    Comm *m_comm {};
-    ApplicationQueuePtr m_app_queue;
-    Apps::RangeServerPtr m_range_server;
-    bool m_shutdown {};
-  };
-
-  /// @}
-
-}}
-
-#endif // Hypertable_RangeServer_ConnectionHandler_h
-
+int GetStatistics::response(StaticBuffer &ext) {
+  CommHeader header;
+  header.initialize_from_request_header(m_event->header);
+  CommBufPtr cbp(new CommBuf( header, 4, ext));
+  cbp->append_i32(Error::OK);
+  return m_comm->send_response(m_event->addr, cbp);
+}

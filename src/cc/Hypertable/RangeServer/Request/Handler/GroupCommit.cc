@@ -1,4 +1,4 @@
-/* -*- c++ -*-
+/*
  * Copyright (C) 2007-2014 Hypertable, Inc.
  *
  * This file is part of Hypertable.
@@ -19,40 +19,14 @@
  * 02110-1301, USA.
  */
 
-#ifndef Hypertable_RangeServer_ConnectionHandler_h
-#define Hypertable_RangeServer_ConnectionHandler_h
+#include <Common/Compat.h>
 
-#include "RangeServer.h"
+#include "GroupCommit.h"
 
-#include <AsyncComm/ApplicationQueue.h>
-#include <AsyncComm/DispatchHandler.h>
+#include <Hypertable/RangeServer/RangeServer.h>
 
-namespace Hypertable {
-class Comm;
-namespace RangeServer {
+using namespace Hypertable;
 
-  /// @addtogroup RangeServer
-  /// @{
-
-  class ConnectionHandler : public DispatchHandler {
-  public:
-
-    ConnectionHandler(Comm *comm, ApplicationQueuePtr &aq, Apps::RangeServerPtr rs)
-      : m_comm(comm), m_app_queue(aq), m_range_server(rs) {
-    }
-
-    virtual void handle(EventPtr &event);
-
-  private:
-    Comm *m_comm {};
-    ApplicationQueuePtr m_app_queue;
-    Apps::RangeServerPtr m_range_server;
-    bool m_shutdown {};
-  };
-
-  /// @}
-
-}}
-
-#endif // Hypertable_RangeServer_ConnectionHandler_h
-
+void GroupCommit::run() {
+  m_range_server->group_commit();
+}

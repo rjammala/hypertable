@@ -19,40 +19,36 @@
  * 02110-1301, USA.
  */
 
-#ifndef Hypertable_RangeServer_ConnectionHandler_h
-#define Hypertable_RangeServer_ConnectionHandler_h
+#ifndef Hypertable_RangeServer_Request_Handler_WaitForMaintenance_h
+#define Hypertable_RangeServer_Request_Handler_WaitForMaintenance_h
 
-#include "RangeServer.h"
-
-#include <AsyncComm/ApplicationQueue.h>
-#include <AsyncComm/DispatchHandler.h>
+#include <AsyncComm/ApplicationHandler.h>
+#include <AsyncComm/Comm.h>
+#include <AsyncComm/Event.h>
 
 namespace Hypertable {
-class Comm;
+namespace Apps { class RangeServer; }
 namespace RangeServer {
+namespace Request {
+namespace Handler {
 
-  /// @addtogroup RangeServer
+  /// @addtogroup RangeServerRequestHandler
   /// @{
 
-  class ConnectionHandler : public DispatchHandler {
+  class WaitForMaintenance : public ApplicationHandler {
   public:
+    WaitForMaintenance(Comm *comm, Apps::RangeServer *rs, EventPtr &event)
+      : ApplicationHandler(event), m_comm(comm), m_range_server(rs) { }
 
-    ConnectionHandler(Comm *comm, ApplicationQueuePtr &aq, Apps::RangeServerPtr rs)
-      : m_comm(comm), m_app_queue(aq), m_range_server(rs) {
-    }
-
-    virtual void handle(EventPtr &event);
+    virtual void run();
 
   private:
-    Comm *m_comm {};
-    ApplicationQueuePtr m_app_queue;
-    Apps::RangeServerPtr m_range_server;
-    bool m_shutdown {};
+    Comm *m_comm;
+    Apps::RangeServer *m_range_server;
   };
 
   /// @}
 
-}}
+}}}}
 
-#endif // Hypertable_RangeServer_ConnectionHandler_h
-
+#endif // Hypertable_RangeServer_Request_Handler_WaitForMaintenance_h

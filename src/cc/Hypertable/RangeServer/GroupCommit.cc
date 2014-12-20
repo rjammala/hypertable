@@ -30,7 +30,7 @@
 using namespace Hypertable;
 using namespace Hypertable::Config;
 
-GroupCommit::GroupCommit(RangeServer *range_server) : m_range_server(range_server) {
+GroupCommit::GroupCommit(Apps::RangeServer *range_server) : m_range_server(range_server) {
 
   m_commit_interval = get_i32("Hypertable.RangeServer.CommitInterval");
 

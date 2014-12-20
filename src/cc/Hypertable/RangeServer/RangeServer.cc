@@ -96,6 +96,7 @@ extern "C" {
 
 using namespace std;
 using namespace Hypertable;
+using namespace Hypertable::RangeServer;
 using namespace Serialization;
 using namespace Hypertable::Property;
 
@@ -1359,7 +1360,7 @@ RangeServer::metadata_sync(ResponseCallback *cb, const char *table_id,
 }
 
 void
-RangeServer::create_scanner(ResponseCallbackCreateScanner *cb,
+RangeServer::create_scanner(Response::Callback::CreateScanner *cb,
         const TableIdentifier *table, const RangeSpec *range_spec,
         const ScanSpec *scan_spec, QueryCache::Key *cache_key) {
   int error = Error::OK;
@@ -1557,7 +1558,7 @@ RangeServer::destroy_scanner(ResponseCallback *cb, uint32_t scanner_id) {
 }
 
 void
-RangeServer::fetch_scanblock(ResponseCallbackFetchScanblock *cb,
+RangeServer::fetch_scanblock(Response::Callback::FetchScanblock *cb,
         uint32_t scanner_id) {
   String errmsg;
   int error = Error::OK;
@@ -1865,7 +1866,7 @@ RangeServer::load_range(ResponseCallback *cb, const TableIdentifier *table,
 }
 
 void
-RangeServer::acknowledge_load(ResponseCallbackAcknowledgeLoad *cb,
+RangeServer::acknowledge_load(Response::Callback::AcknowledgeLoad *cb,
         const vector<QualifiedRangeSpec> &ranges) {
   TableInfoPtr table_info;
   RangePtr range;
@@ -2009,7 +2010,7 @@ RangeServer::commit_log_sync(ResponseCallback *cb,
  *
  */
 void
-RangeServer::update(ResponseCallbackUpdate *cb, uint64_t cluster_id,
+RangeServer::update(Response::Callback::Update *cb, uint64_t cluster_id,
                     const TableIdentifier *table, uint32_t count,
                     StaticBuffer &buffer, uint32_t flags) {
   SchemaPtr schema;
@@ -2367,7 +2368,7 @@ RangeServer::table_maintenance_disable(ResponseCallback *cb,
 
 
 
-void RangeServer::get_statistics(ResponseCallbackGetStatistics *cb,
+void RangeServer::get_statistics(Response::Callback::GetStatistics *cb,
                                  std::vector<SystemVariable::Spec> &specs,
                                  uint64_t generation) {
 
@@ -3022,7 +3023,7 @@ void RangeServer::phantom_load(ResponseCallback *cb, const String &location,
   cb->response_ok();
 }
 
-void RangeServer::phantom_update(ResponseCallbackPhantomUpdate *cb,
+void RangeServer::phantom_update(Response::Callback::PhantomUpdate *cb,
         const String &location, int plan_generation, QualifiedRangeSpec &range,
         uint32_t fragment, EventPtr &event) {
   std::stringstream sout;

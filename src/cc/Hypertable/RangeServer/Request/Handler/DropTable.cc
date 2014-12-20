@@ -19,40 +19,34 @@
  * 02110-1301, USA.
  */
 
-#ifndef Hypertable_RangeServer_ConnectionHandler_h
-#define Hypertable_RangeServer_ConnectionHandler_h
+#include <Common/Compat.h>
 
-#include "RangeServer.h"
+#include "DropTable.h"
 
-#include <AsyncComm/ApplicationQueue.h>
-#include <AsyncComm/DispatchHandler.h>
+#include <Hypertable/RangeServer/RangeServer.h>
 
-namespace Hypertable {
-class Comm;
-namespace RangeServer {
+#include <Hypertable/Lib/Types.h>
 
-  /// @addtogroup RangeServer
-  /// @{
+#include <AsyncComm/ResponseCallback.h>
 
-  class ConnectionHandler : public DispatchHandler {
-  public:
+#include <Common/Error.h>
+#include <Common/Logger.h>
 
-    ConnectionHandler(Comm *comm, ApplicationQueuePtr &aq, Apps::RangeServerPtr rs)
-      : m_comm(comm), m_app_queue(aq), m_range_server(rs) {
-    }
+using namespace Hypertable;
+using namespace Hypertable::RangeServer::Request::Handler;
 
-    virtual void handle(EventPtr &event);
+void DropTable::run() {
+  ResponseCallback cb(m_comm, m_event);
+  TableIdentifier table;
+  const uint8_t *decode_ptr = m_event->payload;
+  size_t decode_remain = m_event->payload_len;
 
-  private:
-    Comm *m_comm {};
-    ApplicationQueuePtr m_app_queue;
-    Apps::RangeServerPtr m_range_server;
-    bool m_shutdown {};
-  };
-
-  /// @}
-
-}}
-
-#endif // Hypertable_RangeServer_ConnectionHandler_h
-
+  try {
+    table.decode(&decode_ptr, &decode_remain);
+    m_range_server->drop_table(&cb, &table);
+  }
+  catch (Exception &e) {
+    HT_ERROR_OUT << e << HT_END;
+    cb.error(e.code(), e.what());
+  }
+}

@@ -1,0 +1,5 @@
+/// @defgroup RangeServerRequestParameters Parameters
+/// @ingroup RangeServerRequest
+/// %Request parameters.
+/// This module contains encode/decode classes for request parameters to range
+/// server functions.

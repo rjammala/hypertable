@@ -36,12 +36,12 @@
 #include <Hypertable/RangeServer/MetaLogEntityRange.h>
 #include <Hypertable/RangeServer/PhantomRangeMap.h>
 #include <Hypertable/RangeServer/QueryCache.h>
-#include <Hypertable/RangeServer/ResponseCallbackAcknowledgeLoad.h>
-#include <Hypertable/RangeServer/ResponseCallbackCreateScanner.h>
-#include <Hypertable/RangeServer/ResponseCallbackFetchScanblock.h>
-#include <Hypertable/RangeServer/ResponseCallbackGetStatistics.h>
-#include <Hypertable/RangeServer/ResponseCallbackPhantomUpdate.h>
-#include <Hypertable/RangeServer/ResponseCallbackUpdate.h>
+#include <Hypertable/RangeServer/Response/Callback/AcknowledgeLoad.h>
+#include <Hypertable/RangeServer/Response/Callback/CreateScanner.h>
+#include <Hypertable/RangeServer/Response/Callback/FetchScanblock.h>
+#include <Hypertable/RangeServer/Response/Callback/GetStatistics.h>
+#include <Hypertable/RangeServer/Response/Callback/PhantomUpdate.h>
+#include <Hypertable/RangeServer/Response/Callback/Update.h>
 #include <Hypertable/RangeServer/ScannerMap.h>
 #include <Hypertable/RangeServer/TableInfo.h>
 #include <Hypertable/RangeServer/TableInfoMap.h>
@@ -72,9 +72,11 @@
 #include <map>
 #include <memory>
 
-namespace Hypertable {
+using namespace Hypertable::RangeServer;
+using namespace Hyperspace;
 
-  using namespace Hyperspace;
+namespace Hypertable {
+namespace Apps {
 
   class ConnectionHandler;
   class UpdateRecTable;
@@ -94,25 +96,25 @@ namespace Hypertable {
     // range server protocol implementations
     void compact(ResponseCallback *, const TableIdentifier *,
                  const char *row, uint32_t flags);
-    void create_scanner(ResponseCallbackCreateScanner *,
+    void create_scanner(Response::Callback::CreateScanner *,
                         const TableIdentifier *,
                         const  RangeSpec *, const ScanSpec *,
                         QueryCache::Key *);
     void destroy_scanner(ResponseCallback *cb, uint32_t scanner_id);
-    void fetch_scanblock(ResponseCallbackFetchScanblock *, uint32_t scanner_id);
+    void fetch_scanblock(Response::Callback::FetchScanblock *, uint32_t scanner_id);
     void load_range(ResponseCallback *, const TableIdentifier *,
                     const RangeSpec *, const RangeState *,
                     bool needs_compaction);
     void acknowledge_load(ResponseCallback *, const TableIdentifier *,
                           const RangeSpec *);
-    void acknowledge_load(ResponseCallbackAcknowledgeLoad *cb,
+    void acknowledge_load(Response::Callback::AcknowledgeLoad *cb,
                           const vector<QualifiedRangeSpec> &ranges);
     void update_schema(ResponseCallback *, const TableIdentifier *,
                        const char *);
 
     /** Inserts data into a table.
      */
-    void update(ResponseCallbackUpdate *cb, uint64_t cluster_id,
+    void update(Response::Callback::Update *cb, uint64_t cluster_id,
                 const TableIdentifier *table, uint32_t count,
                 StaticBuffer &buffer, uint32_t flags);
     void batch_update(std::vector<UpdateRecTable *> &updates, boost::xtime expire_time);
@@ -129,7 +131,7 @@ namespace Hypertable {
     /** @deprecated */
     void dump_pseudo_table(ResponseCallback *cb, const TableIdentifier *table,
                            const char *pseudo_table, const char *outfile);
-    void get_statistics(ResponseCallbackGetStatistics *cb,
+    void get_statistics(Response::Callback::GetStatistics *cb,
                         std::vector<SystemVariable::Spec> &specs,
                         uint64_t generation);
 
@@ -153,7 +155,7 @@ namespace Hypertable {
                       const vector<QualifiedRangeSpec> &specs,
                       const vector<RangeState> &states);
 
-    void phantom_update(ResponseCallbackPhantomUpdate *, const String &location,
+    void phantom_update(Response::Callback::PhantomUpdate *, const String &location,
                         int plan_generation, QualifiedRangeSpec &range,
                         uint32_t fragment, EventPtr &event);
 
@@ -327,6 +329,6 @@ namespace Hypertable {
 
   /// @}
 
-} // namespace Hypertable
+}}
 
 #endif // HYPERTABLE_RANGESERVER_H
