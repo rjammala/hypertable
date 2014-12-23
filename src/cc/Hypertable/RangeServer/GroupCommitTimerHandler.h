@@ -1,5 +1,5 @@
-/** -*- c++ -*-
- * Copyright (C) 2007-2012 Hypertable, Inc.
+/* -*- c++ -*-
+ * Copyright (C) 2007-2014 Hypertable, Inc.
  *
  * This file is part of Hypertable.
  *
@@ -19,16 +19,17 @@
  * 02110-1301, USA.
  */
 
-#ifndef HYPERSPACE_GROUPCOMMITTIMERHANDLER_H
-#define HYPERSPACE_GROUPCOMMITTIMERHANDLER_H
+#ifndef Hypertable_RangeServer_GroupCommitTimerHandler_h
+#define Hypertable_RangeServer_GroupCommitTimerHandler_h
+
+#include <AsyncComm/ApplicationQueue.h>
+#include <AsyncComm/Comm.h>
+#include <AsyncComm/DispatchHandler.h>
+
+#include <Common/Mutex.h>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/condition.hpp>
-
-#include "Common/Mutex.h"
-
-#include "AsyncComm/ApplicationQueue.h"
-#include "AsyncComm/DispatchHandler.h"
 
 namespace Hypertable {
 
@@ -36,8 +37,6 @@ namespace Hypertable {
     class RangeServer;
   }
 
-  /**
-   */
   class GroupCommitTimerHandler : public DispatchHandler {
 
   public:
@@ -64,5 +63,5 @@ namespace Hypertable {
   typedef boost::intrusive_ptr<GroupCommitTimerHandler> GroupCommitTimerHandlerPtr;
 }
 
-#endif // HYPERSPACE_GROUPCOMMITTIMERHANDLER_H
+#endif // Hypertable_RangeServer_GroupCommitTimerHandler_h
 

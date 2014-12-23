@@ -25,32 +25,29 @@
  * managing the maintenance timer.
  */
 
-#include "Common/Compat.h"
-#include "Common/Config.h"
-#include "Common/Error.h"
-#include "Common/InetAddr.h"
-#include "Common/StringExt.h"
-#include "Common/System.h"
-#include "Common/Time.h"
+#include <Common/Compat.h>
+
+#include "Global.h"
+#include "RangeServer.h"
+#include "Request/Handler/DoMaintenance.h"
+#include "TimerHandler.h"
+
+#include <Hypertable/Lib/KeySpec.h>
+
+#include <Common/Config.h>
+#include <Common/Error.h>
+#include <Common/InetAddr.h>
+#include <Common/StringExt.h>
+#include <Common/System.h>
+#include <Common/Time.h>
 
 #include <algorithm>
 #include <sstream>
 
-#include "Common/Time.h"
-
-#include "Global.h"
-#include "RangeServer.h"
-#include "RequestHandlerDoMaintenance.h"
-#include "TimerHandler.h"
-
-#include "Hypertable/Lib/KeySpec.h"
-
 using namespace Hypertable;
+using namespace Hypertable::RangeServer;
 using namespace Hypertable::Config;
 
-/**
- *
- */
 TimerHandler::TimerHandler(Comm *comm, Apps::RangeServer *range_server)
   : m_comm(comm), m_range_server(range_server),
     m_shutdown(false), m_shutdown_complete(false),
@@ -199,7 +196,7 @@ void TimerHandler::handle(Hypertable::EventPtr &event) {
     if (event->type == Hypertable::Event::TIMER) {
 
       if (do_maintenance) {
-        m_app_queue->add( new RequestHandlerDoMaintenance(m_range_server) );
+        m_app_queue->add( new Request::Handler::DoMaintenance(m_range_server) );
         m_schedule_outstanding = true;
       }
       else {

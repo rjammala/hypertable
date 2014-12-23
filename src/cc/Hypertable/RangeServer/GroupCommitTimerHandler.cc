@@ -18,23 +18,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-#include "Common/Compat.h"
-#include "Common/Config.h"
-#include "Common/Error.h"
-#include "Common/InetAddr.h"
-#include "Common/StringExt.h"
-#include "Common/System.h"
-#include "Common/Time.h"
+#include <Common/Compat.h>
 
-#include "RequestHandlerGroupCommit.h"
 #include "GroupCommitTimerHandler.h"
+#include "Request/Handler/GroupCommit.h"
+
+#include <Common/Config.h>
+#include <Common/Error.h>
+#include <Common/InetAddr.h>
+#include <Common/StringExt.h>
+#include <Common/System.h>
+#include <Common/Time.h>
 
 using namespace Hypertable;
+using namespace Hypertable::RangeServer;
 using namespace Hypertable::Config;
 
-/**
- *
- */
 GroupCommitTimerHandler::GroupCommitTimerHandler(Comm *comm, Apps::RangeServer *range_server,
                                                  ApplicationQueuePtr &app_queue) 
   : m_comm(comm), m_range_server(range_server), m_app_queue(app_queue),
@@ -64,7 +63,7 @@ void GroupCommitTimerHandler::handle(Hypertable::EventPtr &event_ptr) {
     return;
   }
 
-  m_app_queue->add( new RequestHandlerGroupCommit(m_range_server) );
+  m_app_queue->add( new Request::Handler::GroupCommit(m_range_server) );
 
   if ((error = m_comm->set_timer(m_commit_interval, this)) != Error::OK)
     HT_FATALF("Problem setting timer - %s", Error::get_text(error));

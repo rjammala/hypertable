@@ -24,6 +24,7 @@
 /// This file contains method and type definitions for the RangeServer
 
 #include <Common/Compat.h>
+
 #include "RangeServer.h"
 
 #include <Hypertable/RangeServer/FillScanBlock.h>
@@ -100,7 +101,7 @@ using namespace Hypertable::RangeServer;
 using namespace Serialization;
 using namespace Hypertable::Property;
 
-RangeServer::RangeServer(PropertiesPtr &props, ConnectionManagerPtr &conn_mgr,
+Apps::RangeServer::RangeServer(PropertiesPtr &props, ConnectionManagerPtr &conn_mgr,
     ApplicationQueuePtr &app_queue, Hyperspace::SessionPtr &hyperspace)
   : m_props(props), m_conn_manager(conn_mgr),
     m_app_queue(app_queue), m_hyperspace(hyperspace) {
@@ -361,7 +362,7 @@ RangeServer::RangeServer(PropertiesPtr &props, ConnectionManagerPtr &conn_mgr,
 
 }
 
-void RangeServer::shutdown() {
+void Apps::RangeServer::shutdown() {
 
   try {
 
@@ -457,7 +458,7 @@ void RangeServer::shutdown() {
 
 }
 
-RangeServer::~RangeServer() {
+Apps::RangeServer::~RangeServer() {
 }
 
 
@@ -466,7 +467,7 @@ RangeServer::~RangeServer() {
  * - Clear any Range server state (including any partially created commit logs)
  * - Open the commit log
  */
-void RangeServer::initialize(PropertiesPtr &props) {
+void Apps::RangeServer::initialize(PropertiesPtr &props) {
   String top_dir = Global::toplevel_dir + "/servers/" + Global::location_initializer->get();
   LockStatus lock_status;
   uint32_t oflags = OPEN_FLAG_READ | OPEN_FLAG_WRITE | OPEN_FLAG_LOCK;
@@ -576,7 +577,7 @@ namespace {
 }
 
 
-void RangeServer::local_recover() {
+void Apps::RangeServer::local_recover() {
   MetaLog::DefinitionPtr rsml_definition =
       new MetaLog::DefinitionRangeServer(Global::location_initializer->get().c_str());
   MetaLog::ReaderPtr rsml_reader;
@@ -913,7 +914,7 @@ void RangeServer::local_recover() {
 
 
 void
-RangeServer::replay_load_range(TableInfoMap &replay_map,
+Apps::RangeServer::replay_load_range(TableInfoMap &replay_map,
                                MetaLogEntityRange *range_entity) {
   SchemaPtr schema;
   TableInfoPtr table_info, live_table_info;
@@ -990,7 +991,7 @@ RangeServer::replay_load_range(TableInfoMap &replay_map,
 }
 
 
-void RangeServer::replay_log(TableInfoMap &replay_map,
+void Apps::RangeServer::replay_log(TableInfoMap &replay_map,
                              CommitLogReaderPtr &log_reader) {
   BlockHeaderCommitLog header;
   TableIdentifier table_id;
@@ -1069,7 +1070,7 @@ void RangeServer::replay_log(TableInfoMap &replay_map,
 }
 
 void
-RangeServer::compact(ResponseCallback *cb, const TableIdentifier *table,
+Apps::RangeServer::compact(ResponseCallback *cb, const TableIdentifier *table,
                      const char *row, uint32_t flags) {
   Ranges ranges;
   TableInfoPtr table_info;
@@ -1228,7 +1229,7 @@ namespace {
 }
 
 void
-RangeServer::metadata_sync(ResponseCallback *cb, const char *table_id,
+Apps::RangeServer::metadata_sync(ResponseCallback *cb, const char *table_id,
         uint32_t flags, std::vector<const char *> columns) {
   Ranges ranges;
   TableInfoPtr table_info;
@@ -1360,7 +1361,7 @@ RangeServer::metadata_sync(ResponseCallback *cb, const char *table_id,
 }
 
 void
-RangeServer::create_scanner(Response::Callback::CreateScanner *cb,
+Apps::RangeServer::create_scanner(Response::Callback::CreateScanner *cb,
         const TableIdentifier *table, const RangeSpec *range_spec,
         const ScanSpec *scan_spec, QueryCache::Key *cache_key) {
   int error = Error::OK;
@@ -1551,14 +1552,14 @@ RangeServer::create_scanner(Response::Callback::CreateScanner *cb,
 }
 
 void
-RangeServer::destroy_scanner(ResponseCallback *cb, uint32_t scanner_id) {
+Apps::RangeServer::destroy_scanner(ResponseCallback *cb, uint32_t scanner_id) {
   HT_DEBUGF("destroying scanner id=%u", scanner_id);
   m_scanner_map.remove(scanner_id);
   cb->response_ok();
 }
 
 void
-RangeServer::fetch_scanblock(Response::Callback::FetchScanblock *cb,
+Apps::RangeServer::fetch_scanblock(Response::Callback::FetchScanblock *cb,
         uint32_t scanner_id) {
   String errmsg;
   int error = Error::OK;
@@ -1657,7 +1658,7 @@ RangeServer::fetch_scanblock(Response::Callback::FetchScanblock *cb,
 }
 
 void
-RangeServer::load_range(ResponseCallback *cb, const TableIdentifier *table,
+Apps::RangeServer::load_range(ResponseCallback *cb, const TableIdentifier *table,
     const RangeSpec *range_spec, const RangeState *range_state, bool needs_compaction) {
   int error = Error::OK;
   TableMutatorPtr mutator;
@@ -1866,7 +1867,7 @@ RangeServer::load_range(ResponseCallback *cb, const TableIdentifier *table,
 }
 
 void
-RangeServer::acknowledge_load(Response::Callback::AcknowledgeLoad *cb,
+Apps::RangeServer::acknowledge_load(Response::Callback::AcknowledgeLoad *cb,
         const vector<QualifiedRangeSpec> &ranges) {
   TableInfoPtr table_info;
   RangePtr range;
@@ -1920,7 +1921,7 @@ RangeServer::acknowledge_load(Response::Callback::AcknowledgeLoad *cb,
 }
 
 void
-RangeServer::update_schema(ResponseCallback *cb, 
+Apps::RangeServer::update_schema(ResponseCallback *cb, 
         const TableIdentifier *table, const char *schema_str) {
   TableInfoPtr table_info;
   SchemaPtr schema;
@@ -1947,7 +1948,7 @@ RangeServer::update_schema(ResponseCallback *cb,
 
 
 void
-RangeServer::commit_log_sync(ResponseCallback *cb,
+Apps::RangeServer::commit_log_sync(ResponseCallback *cb,
                              uint64_t cluster_id,
                              const TableIdentifier *table) {
   String errmsg;
@@ -2010,7 +2011,7 @@ RangeServer::commit_log_sync(ResponseCallback *cb,
  *
  */
 void
-RangeServer::update(Response::Callback::Update *cb, uint64_t cluster_id,
+Apps::RangeServer::update(Response::Callback::Update *cb, uint64_t cluster_id,
                     const TableIdentifier *table, uint32_t count,
                     StaticBuffer &buffer, uint32_t flags) {
   SchemaPtr schema;
@@ -2058,14 +2059,14 @@ RangeServer::update(Response::Callback::Update *cb, uint64_t cluster_id,
 }
 
 void
-RangeServer::batch_update(std::vector<UpdateRecTable *> &updates, boost::xtime expire_time) {
+Apps::RangeServer::batch_update(std::vector<UpdateRecTable *> &updates, boost::xtime expire_time) {
   UpdateContext *uc = new UpdateContext(updates, expire_time);
   m_update_pipeline->add(uc);
 }
 
 
 void
-RangeServer::drop_table(ResponseCallback *cb, const TableIdentifier *table) {
+Apps::RangeServer::drop_table(ResponseCallback *cb, const TableIdentifier *table) {
   TableInfoPtr table_info;
   Ranges ranges;
   String metadata_prefix;
@@ -2146,7 +2147,7 @@ RangeServer::drop_table(ResponseCallback *cb, const TableIdentifier *table) {
   cb->response_ok();
 }
 
-void RangeServer::dump(ResponseCallback *cb, const char *outfile,
+void Apps::RangeServer::dump(ResponseCallback *cb, const char *outfile,
                        bool nokeys) {
   Ranges ranges;
   AccessGroup::MaintenanceData *ag_data;
@@ -2212,7 +2213,7 @@ void RangeServer::dump(ResponseCallback *cb, const char *outfile,
 }
 
 void
-RangeServer::dump_pseudo_table(ResponseCallback *cb, const TableIdentifier *table,
+Apps::RangeServer::dump_pseudo_table(ResponseCallback *cb, const TableIdentifier *table,
                                const char *pseudo_table, const char *outfile) {
 
   HT_INFOF("dump_psudo_table ID=%s pseudo-table=%s outfile=%s", table->id, pseudo_table, outfile);
@@ -2279,7 +2280,7 @@ RangeServer::dump_pseudo_table(ResponseCallback *cb, const TableIdentifier *tabl
 
 }
 
-void RangeServer::heapcheck(ResponseCallback *cb, const char *outfile) {
+void Apps::RangeServer::heapcheck(ResponseCallback *cb, const char *outfile) {
 
   HT_INFO("heapcheck");
 
@@ -2303,7 +2304,7 @@ void RangeServer::heapcheck(ResponseCallback *cb, const char *outfile) {
   cb->response_ok();
 }
 
-void RangeServer::set_state(ResponseCallback *cb,
+void Apps::RangeServer::set_state(ResponseCallback *cb,
                             std::vector<SystemVariable::Spec> &specs,
                             uint64_t generation) {
   HT_INFOF("generation=%llu %s", (Llu)generation,
@@ -2314,7 +2315,7 @@ void RangeServer::set_state(ResponseCallback *cb,
 }
 
 void
-RangeServer::table_maintenance_enable(ResponseCallback *cb,
+Apps::RangeServer::table_maintenance_enable(ResponseCallback *cb,
                                       const TableIdentifier *table) {
   HT_INFOF("table_maintenance_enable(\"%s\"", table->id);
 
@@ -2337,7 +2338,7 @@ RangeServer::table_maintenance_enable(ResponseCallback *cb,
 
 
 void
-RangeServer::table_maintenance_disable(ResponseCallback *cb,
+Apps::RangeServer::table_maintenance_disable(ResponseCallback *cb,
                                        const TableIdentifier *table) {
   HT_INFOF("table_maintenance_disable(\"%s\"", table->id);
 
@@ -2368,14 +2369,14 @@ RangeServer::table_maintenance_disable(ResponseCallback *cb,
 
 
 
-void RangeServer::get_statistics(Response::Callback::GetStatistics *cb,
+void Apps::RangeServer::get_statistics(Response::Callback::GetStatistics *cb,
                                  std::vector<SystemVariable::Spec> &specs,
                                  uint64_t generation) {
 
   if (test_and_set_get_statistics_outstanding(true))
     return;
 
-  HT_ON_OBJ_SCOPE_EXIT(*this, &RangeServer::test_and_set_get_statistics_outstanding, false);
+  HT_ON_OBJ_SCOPE_EXIT(*this, &Apps::RangeServer::test_and_set_get_statistics_outstanding, false);
 
   ScopedLock lock(m_stats_mutex);
   RangesPtr ranges = Global::get_ranges();
@@ -2727,7 +2728,7 @@ void RangeServer::get_statistics(Response::Callback::GetStatistics *cb,
 
 
 void
-RangeServer::drop_range(ResponseCallback *cb, const TableIdentifier *table,
+Apps::RangeServer::drop_range(ResponseCallback *cb, const TableIdentifier *table,
         const RangeSpec *range_spec) {
   TableInfoPtr table_info;
   RangePtr range;
@@ -2760,7 +2761,7 @@ RangeServer::drop_range(ResponseCallback *cb, const TableIdentifier *table,
 }
 
 void
-RangeServer::relinquish_range(ResponseCallback *cb,
+Apps::RangeServer::relinquish_range(ResponseCallback *cb,
         const TableIdentifier *table, const RangeSpec *range_spec) {
   TableInfoPtr table_info;
   RangePtr range;
@@ -2798,7 +2799,7 @@ RangeServer::relinquish_range(ResponseCallback *cb,
   }
 }
 
-void RangeServer::replay_fragments(ResponseCallback *cb, int64_t op_id,
+void Apps::RangeServer::replay_fragments(ResponseCallback *cb, int64_t op_id,
         const String &location, int plan_generation, 
         int type, const vector<uint32_t> &fragments,
         RangeRecoveryReceiverPlan &receiver_plan,
@@ -2941,7 +2942,7 @@ void RangeServer::replay_fragments(ResponseCallback *cb, int64_t op_id,
   }
 }
 
-void RangeServer::phantom_load(ResponseCallback *cb, const String &location,
+void Apps::RangeServer::phantom_load(ResponseCallback *cb, const String &location,
         int plan_generation,
         const vector<uint32_t> &fragments,
         const vector<QualifiedRangeSpec> &specs,
@@ -3023,7 +3024,7 @@ void RangeServer::phantom_load(ResponseCallback *cb, const String &location,
   cb->response_ok();
 }
 
-void RangeServer::phantom_update(Response::Callback::PhantomUpdate *cb,
+void Apps::RangeServer::phantom_update(Response::Callback::PhantomUpdate *cb,
         const String &location, int plan_generation, QualifiedRangeSpec &range,
         uint32_t fragment, EventPtr &event) {
   std::stringstream sout;
@@ -3080,7 +3081,7 @@ void RangeServer::phantom_update(Response::Callback::PhantomUpdate *cb,
   cb->response_ok();
 }
 
-void RangeServer::phantom_prepare_ranges(ResponseCallback *cb, int64_t op_id,
+void Apps::RangeServer::phantom_prepare_ranges(ResponseCallback *cb, int64_t op_id,
         const String &location, int plan_generation, 
         const vector<QualifiedRangeSpec> &specs) {
   FailoverPhantomRangeMap::iterator failover_map_it;
@@ -3302,7 +3303,7 @@ void RangeServer::phantom_prepare_ranges(ResponseCallback *cb, int64_t op_id,
 
 }
 
-void RangeServer::phantom_commit_ranges(ResponseCallback *cb, int64_t op_id,
+void Apps::RangeServer::phantom_commit_ranges(ResponseCallback *cb, int64_t op_id,
         const String &location, int plan_generation, 
         const vector<QualifiedRangeSpec> &specs) {
   FailoverPhantomRangeMap::iterator failover_map_it;
@@ -3511,7 +3512,7 @@ void RangeServer::phantom_commit_ranges(ResponseCallback *cb, int64_t op_id,
   }
 }
 
-bool RangeServer::live(const vector<QualifiedRangeSpec> &ranges) {
+bool Apps::RangeServer::live(const vector<QualifiedRangeSpec> &ranges) {
   TableInfoPtr table_info;
   size_t live_count = 0;
   foreach_ht (const QualifiedRangeSpec &qrs, ranges) {
@@ -3524,7 +3525,7 @@ bool RangeServer::live(const vector<QualifiedRangeSpec> &ranges) {
   return live_count == ranges.size();
 }
 
-bool RangeServer::live(const QualifiedRangeSpec &spec) {
+bool Apps::RangeServer::live(const QualifiedRangeSpec &spec) {
   TableInfoPtr table_info;
   if (m_context->live_map->lookup(spec.table.id, table_info)) {
     if (table_info->has_range(&spec.range))
@@ -3534,7 +3535,7 @@ bool RangeServer::live(const QualifiedRangeSpec &spec) {
 }
 
 
-void RangeServer::wait_for_maintenance(ResponseCallback *cb) {
+void Apps::RangeServer::wait_for_maintenance(ResponseCallback *cb) {
   HT_INFO("wait_for_maintenance");
   if (!Global::maintenance_queue->wait_for_empty(cb->event()->deadline()))
     cb->error(Error::REQUEST_TIMEOUT, "");
@@ -3542,7 +3543,7 @@ void RangeServer::wait_for_maintenance(ResponseCallback *cb) {
 }
 
 
-void RangeServer::verify_schema(TableInfoPtr &table_info, uint32_t generation,
+void Apps::RangeServer::verify_schema(TableInfoPtr &table_info, uint32_t generation,
                                 const TableSchemaMap *table_schemas) {
   DynamicBuffer valbuf;
   SchemaPtr schema = table_info->get_schema();
@@ -3573,11 +3574,11 @@ void RangeServer::verify_schema(TableInfoPtr &table_info, uint32_t generation,
   }
 }
 
-void RangeServer::group_commit() {
+void Apps::RangeServer::group_commit() {
   m_group_commit->trigger();
 }
 
-void RangeServer::do_maintenance() {
+void Apps::RangeServer::do_maintenance() {
 
   HT_ASSERT(m_timer_handler);
 
@@ -3628,7 +3629,7 @@ void RangeServer::do_maintenance() {
 }
 
 void
-RangeServer::group_commit_add(EventPtr &event, uint64_t cluster_id,
+Apps::RangeServer::group_commit_add(EventPtr &event, uint64_t cluster_id,
                               SchemaPtr &schema, const TableIdentifier *table,
                               uint32_t count, StaticBuffer &buffer,
                               uint32_t flags) {

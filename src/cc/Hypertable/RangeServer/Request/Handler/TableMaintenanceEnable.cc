@@ -26,7 +26,8 @@
 /// carrying out a RangeServer::table_maintenance_enable() request.
 
 #include <Common/Compat.h>
-#include "TableMaintenanceEnable.h>
+
+#include "TableMaintenanceEnable.h"
 
 #include <Hypertable/RangeServer/RangeServer.h>
 
@@ -38,6 +39,8 @@
 #include <Common/Logger.h>
 
 using namespace Hypertable;
+using namespace Hypertable::Apps;
+using namespace Hypertable::RangeServer::Request::Handler;
 
 void TableMaintenanceEnable::run() {
   ResponseCallback cb(m_comm, m_event);

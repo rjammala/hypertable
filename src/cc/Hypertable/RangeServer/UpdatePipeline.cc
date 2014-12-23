@@ -28,7 +28,7 @@
 #include "UpdatePipeline.h"
 
 #include <Hypertable/RangeServer/Global.h>
-#include <Hypertable/RangeServer/ResponseCallbackUpdate.h>
+#include <Hypertable/RangeServer/Response/Callback/Update.h>
 #include <Hypertable/RangeServer/UpdateContext.h>
 #include <Hypertable/RangeServer/UpdateRecRange.h>
 #include <Hypertable/RangeServer/UpdateRecTable.h>
@@ -43,6 +43,7 @@
 #include <set>
 
 using namespace Hypertable;
+using namespace Hypertable::RangeServer;
 using namespace std;
 
 UpdatePipeline::UpdatePipeline(ContextPtr &context, QueryCachePtr &query_cache,
@@ -761,7 +762,7 @@ void UpdatePipeline::add_and_respond() {
       }
 
       foreach_ht (UpdateRequest *request, table_update->requests) {
-        ResponseCallbackUpdate cb(m_context->comm, request->event);
+	Response::Callback::Update cb(m_context->comm, request->event);
 
         if (table_update->error != Error::OK) {
           if ((error = cb.error(table_update->error, table_update->error_msg)) != Error::OK)

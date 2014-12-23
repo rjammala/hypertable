@@ -76,10 +76,9 @@ using namespace Hypertable::RangeServer;
 using namespace Hyperspace;
 
 namespace Hypertable {
+namespace RangeServer { class ConnectionHandler; }
+class UpdateRecTable;
 namespace Apps {
-
-  class ConnectionHandler;
-  class UpdateRecTable;
 
   /// @defgroup RangeServer RangeServer
   /// @ingroup Hypertable

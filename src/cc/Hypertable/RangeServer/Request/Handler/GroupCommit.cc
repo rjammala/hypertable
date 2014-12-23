@@ -26,6 +26,7 @@
 #include <Hypertable/RangeServer/RangeServer.h>
 
 using namespace Hypertable;
+using namespace Hypertable::RangeServer::Request::Handler;
 
 void GroupCommit::run() {
   m_range_server->group_commit();

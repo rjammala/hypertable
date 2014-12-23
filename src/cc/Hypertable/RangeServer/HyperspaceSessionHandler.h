@@ -27,7 +27,7 @@
 
 namespace Hypertable {
 
-  class RangeServer;
+  namespace Apps { class RangeServer; }
 
   /**
    *
