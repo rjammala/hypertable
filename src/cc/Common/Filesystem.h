@@ -110,7 +110,7 @@ namespace Hypertable {
 
     private:
       /// Returns encoded length minus leading length field
-      size_t internal_encoded_length() const;
+      size_t encoded_length_internal() const override;
       
     };
 

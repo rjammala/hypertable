@@ -39,13 +39,13 @@ namespace {
 }
 
 size_t Create::encoded_length() const {
-  size_t length = internal_encoded_length();
+  size_t length = encoded_length_internal();
   return 1 + Serialization::encoded_length_vi32(length) + length;
 }
 
 void Create::encode(uint8_t **bufp) const {
   Serialization::encode_i8(bufp, VERSION);
-  Serialization::encode_vi32(bufp, internal_encoded_length());
+  Serialization::encode_vi32(bufp, encoded_length_internal());
   Serialization::encode_i32(bufp, m_flags);
   Serialization::encode_i32(bufp, m_bufsz);
   Serialization::encode_i32(bufp, m_replication);
@@ -73,6 +73,6 @@ void Create::decode(const uint8_t **bufp, size_t *remainp) {
     *bufp = end;
 }
 
-size_t Create::internal_encoded_length() const {
+size_t Create::encoded_length_internal() const {
   return 20 + Serialization::encoded_length_vstr(m_fname);
 }

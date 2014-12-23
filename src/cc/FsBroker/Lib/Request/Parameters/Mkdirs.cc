@@ -39,13 +39,13 @@ namespace {
 }
 
 size_t Mkdirs::encoded_length() const {
-  size_t length = internal_encoded_length();
+  size_t length = encoded_length_internal();
   return 1 + Serialization::encoded_length_vi32(length) + length;
 }
 
 void Mkdirs::encode(uint8_t **bufp) const {
   Serialization::encode_i8(bufp, VERSION);
-  Serialization::encode_vi32(bufp, internal_encoded_length());
+  Serialization::encode_vi32(bufp, encoded_length_internal());
   Serialization::encode_vstr(bufp, m_dirname);
 }
 
@@ -65,6 +65,6 @@ void Mkdirs::decode(const uint8_t **bufp, size_t *remainp) {
     *bufp = end;
 }
 
-size_t Mkdirs::internal_encoded_length() const {
+size_t Mkdirs::encoded_length_internal() const {
   return Serialization::encoded_length_vstr(m_dirname);
 }

@@ -44,12 +44,12 @@ namespace {
 }
 
 size_t Filesystem::Dirent::encoded_length() const {
-  size_t length = internal_encoded_length();
+  size_t length = encoded_length_internal();
   return 1 + Serialization::encoded_length_vi32(length) + length;
 }
 void Filesystem::Dirent::encode(uint8_t **bufp) const {
   encode_i8(bufp, DIRENT_VERSION);
-  encode_vi32(bufp, internal_encoded_length());
+  encode_vi32(bufp, encoded_length_internal());
   encode_vstr(bufp, name);
   encode_i64(bufp, length);
   encode_i32(bufp, last_modification_time);
@@ -74,7 +74,7 @@ void Filesystem::Dirent::decode(const uint8_t **bufp, size_t *remainp) {
     *bufp = end;
 }
 
-size_t Filesystem::Dirent::internal_encoded_length() const {
+size_t Filesystem::Dirent::encoded_length_internal() const {
   return 13 + encoded_length_vstr(name);
 }
 

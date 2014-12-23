@@ -79,7 +79,7 @@ namespace Parameters {
   private:
 
     /// Returns internal encoded length
-    size_t internal_encoded_length() const;
+    size_t encoded_length_internal() const override;
 
     /// File descriptor to which close applies
     int32_t m_fd {};

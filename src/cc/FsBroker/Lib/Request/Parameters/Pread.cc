@@ -39,13 +39,13 @@ namespace {
 }
 
 size_t Pread::encoded_length() const {
-  size_t length = internal_encoded_length();
+  size_t length = encoded_length_internal();
   return 1 + Serialization::encoded_length_vi32(length) + length;
 }
 
 void Pread::encode(uint8_t **bufp) const {
   Serialization::encode_i8(bufp, VERSION);
-  Serialization::encode_vi32(bufp, internal_encoded_length());
+  Serialization::encode_vi32(bufp, encoded_length_internal());
   Serialization::encode_i32(bufp, m_fd);
   Serialization::encode_i64(bufp, m_offset);
   Serialization::encode_i32(bufp, m_amount);
@@ -70,6 +70,6 @@ void Pread::decode(const uint8_t **bufp, size_t *remainp) {
     *bufp = end;
 }
 
-size_t Pread::internal_encoded_length() const {
+size_t Pread::encoded_length_internal() const {
   return 17;
 }

@@ -52,6 +52,12 @@ namespace Hypertable {
     /// @param remainp Address of integer holding amount of remaining buffer
     virtual void decode(const uint8_t **bufp, size_t *remainp) = 0;
 
+  protected:
+
+    /// Returns internal serialized length
+    /// @return Internal serialized length
+    virtual size_t encoded_length_internal() const = 0;
+
   };
 
   /// @}

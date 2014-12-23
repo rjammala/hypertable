@@ -82,7 +82,7 @@ namespace Hypertable {
     /// Returns serialized length
     /// @return Serialized length
     /// @see encode() for serialization format
-    virtual size_t encoded_length() const override { return 1; };
+    size_t encoded_length() const override;
 
     /// Writes serialized representation to a buffer.
     /// Serialized format is as follows:
@@ -95,13 +95,13 @@ namespace Hypertable {
     ///   </tr>
     /// </table>
     /// @param bufp Address of destination buffer pointer (advanced by call)
-    virtual void encode(uint8_t **bufp) const override;
+    void encode(uint8_t **bufp) const override;
 
     /// Reads serialized representation from a buffer.
     /// @param bufp Address of destination buffer pointer (advanced by call)
     /// @param remainp Address of integer holding amount of remaining buffer
     /// @see encode() for serialization format
-    virtual void decode(const uint8_t **bufp, size_t *remainp) override;
+    void decode(const uint8_t **bufp, size_t *remainp) override;
 
     /// Returns human readable string describing table parts.
     /// @return Human readable string describing table parts.
@@ -116,6 +116,9 @@ namespace Hypertable {
     void clear() { m_parts = 0; }
 
   private:
+
+    /// Returns internal encoded length
+    size_t encoded_length_internal() const override;
 
     /// Bitmask representing table parts.
     int8_t m_parts {};

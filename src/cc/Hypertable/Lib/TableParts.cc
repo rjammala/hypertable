@@ -29,13 +29,39 @@
 
 using namespace Hypertable;
 
+namespace {
+  uint8_t VERSION {8};
+}
+
+size_t TableParts::encoded_length() const {
+  size_t length = encoded_length_internal();
+  return 1 + Serialization::encoded_length_vi32(length) + length;
+}
+
+
 void TableParts::encode(uint8_t **bufp) const {
+  Serialization::encode_i8(bufp, VERSION);
+  Serialization::encode_vi32(bufp, encoded_length_internal());
   Serialization::encode_i8(bufp, (uint8_t)m_parts);
 }
 
 void TableParts::decode(const uint8_t **bufp, size_t *remainp) {
   m_parts = Serialization::decode_i8(bufp, remainp);
+  if (m_parts < 8)
+    return;
+  uint32_t encoding_length = Serialization::decode_vi32(bufp, remainp);
+  const uint8_t *end = *bufp + encoding_length;
+  m_parts = Serialization::decode_i8(bufp, remainp);
+  // If encoding is longer than we expect, that means we're decoding a newer
+  // version, so skip the newer portion that we don't know about
+  if (*bufp < end)
+    *bufp = end;
 }
+
+size_t TableParts::encoded_length_internal() const {
+  return 1;
+}
+
 
 const std::string TableParts::to_string() const {
   std::string str;

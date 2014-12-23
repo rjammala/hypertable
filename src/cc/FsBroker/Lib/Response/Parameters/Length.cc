@@ -39,13 +39,13 @@ namespace {
 }
 
 size_t Length::encoded_length() const {
-  size_t length = internal_encoded_length();
+  size_t length = encoded_length_internal();
   return 1 + Serialization::encoded_length_vi32(length) + length;
 }
 
 void Length::encode(uint8_t **bufp) const {
   Serialization::encode_i8(bufp, VERSION);
-  Serialization::encode_vi32(bufp, internal_encoded_length());
+  Serialization::encode_vi32(bufp, encoded_length_internal());
   Serialization::encode_i64(bufp, m_length);
 }
 
@@ -64,6 +64,6 @@ void Length::decode(const uint8_t **bufp, size_t *remainp) {
     *bufp = end;
 }
 
-size_t Length::internal_encoded_length() const {
+size_t Length::encoded_length_internal() const {
   return 8;
 }

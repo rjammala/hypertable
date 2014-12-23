@@ -93,6 +93,12 @@ namespace Hypertable {
 
     /// Set of server proxy names participating in scan
     std::set<std::string> servers;
+
+  private:
+
+    /// Returns internal encoded length
+    size_t encoded_length_internal() const override;
+    
   };
 
   /// @}
